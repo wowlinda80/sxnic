@@ -1,0 +1,95 @@
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="commcrud" extends="default" namespace="/admin/comm">
+		<default-interceptor-ref name="validationStack" />
+
+		<action name="*_edit" class="net.sxnic.comm.{1}.action.Edit">
+			<interceptor-ref name="basicStack" />
+			<result name="success">/WEB-INF/comm/{1}/edit.html</result>
+			<result name="input" type="redirect">
+				{1}_browse.jspa?msg=${msg}&amp;page=${page}
+			</result>
+		</action>
+
+		<action name="*_view" class="net.sxnic.comm.{1}.action.View">
+			<interceptor-ref name="basicStack" />
+			<result name="success">/WEB-INF/comm/{1}/view.html</result>
+		</action>
+
+		<action name="*_save" class="net.sxnic.comm.{1}.action.Save">
+			<interceptor-ref name="uploadStack" />
+			<result name="input">/WEB-INF/comm/{1}/edit.html</result>
+			<result name="success" type="redirect">
+				{1}_browse.jspa?msg=${msg}&amp;page=${page}
+			</result>
+		 
+			<result name="edit" type="redirect">
+				{1}_edit.jspa?id=${id}&amp;msg=${msg}
+			</result>
+		</action>
+
+		<action name="*_browse" class="net.sxnic.comm.{1}.action.Browse">
+			<interceptor-ref name="basicStack" />
+			<result name="success">/WEB-INF/comm/{1}/browse.html</result>
+		</action>
+
+		<action name="*_delete" class="net.sxnic.comm.{1}.action.Delete">
+			<interceptor-ref name="basicStack" />
+			<result name="success" type="redirect">
+				{1}_browse.jspa?msg=${msg}&amp;page=${page}
+			</result>
+		</action>
+
+		<action name="*_preCreate" class="net.sxnic.comm.{1}.action.PreCreate">
+			<interceptor-ref name="basicStack" />
+			<result name="success">/WEB-INF/comm/{1}/create.html</result>
+		</action>
+
+		<action name="*_create" class="net.sxnic.comm.{1}.action.Create">
+			<interceptor-ref name="saveStack" />
+			<result name="input">/WEB-INF/comm/{1}/create.html</result>
+			<result name="success" type="redirect">
+				{1}_browse.jspa?msg=${msg}&amp;page=${page}
+			</result>
+			<result name="edit" type="redirect">
+				{1}_edit.jspa?id=${id}&amp;msg=${msg}
+			</result>
+		</action>
+		
+		
+		<!-- 按类别删除基本码 -->
+		<action name="basecodeDeleteSort" class="net.sxnic.comm.basecode.action.DeleteSort">
+			<result name="success" type="redirect">
+				/basecode_browse.jspa?menuCode=${menuCode};sortCode=${sortCode}
+			</result>
+			<result name="input" type="redirect">
+				/basecode_browse.jspa?menuCode=${menuCode}
+			</result>
+		</action>
+		
+		<!-- 清空日志 -->
+		<action name="logClear" class="net.sxnic.comm.log.action.Clear">
+			<result name="success" type="redirect">
+				log_browse.jspa?msg=${msg}
+			</result>
+			 
+		</action>				
+	</package>
+	
+	<package name="commdownload" extends="default" namespace="/comm">
+		<action name="download" class="net.sxnic.comm.action.DownloadAction">
+			<result name="input">/error.html</result>
+			<exception-mapping result="client-abort-exception" exception="org.apache.catalina.connector.ClientAbortException"/>			
+			<result name="success" type="stream">
+				<param name="contentType">application/x-msdownload</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">attachment;filename="${downloadFileName}"</param>
+				<param name="bufferSize">4096</param>
+			</result>
+		</action>	
+	</package>
+		
+</struts>

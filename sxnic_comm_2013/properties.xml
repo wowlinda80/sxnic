@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="properties" basedir=".">
+
+    <!-- Name and Version -->
+    <property name="name" value="sxnic-comm" />
+    <property name="version" value="2.0.0" />
+
+    <!-- Directories for sources -->
+    <property name="src.dir" value="${basedir}/src/comm" />
+    <property name="src.java" value="${src.dir}/java" />
+    <property name="src.test" value="${src.dir}/test" />
+    <property name="src.config" value="${src.dir}/config" />
+    <property name="src.etc" value="${src.dir}/etc" />
+    <property name="src.level" value="1.6" />
+
+    <!-- Directories for build -->
+    <property name="build.compiler" value="modern" />
+
+    <property name="build.dir" value="${basedir}/build" />
+    <property name="build.classes" value="${build.dir}/classes" />
+    <property name="build.tests" value="${build.dir}/tests" />
+
+    <!-- Directories for Distribute -->
+    <property name="dist.dir" value="${basedir}/dist" />
+    <property name="dist.src" value="${dist.dir}/src" />
+    <property name="dist.lib" value="${dist.dir}/lib" />
+    <property name="dist.dist" value="${dist.dir}/dist" />
+    <property name="dist.jar" value="${dist.dist}/${name}-${version}.jar" />
+
+    <!-- Directories for Documents -->
+    <property name="doc.dir" value="${dist.dir}/doc" />
+    <property name="doc.apidoc" value="${doc.dir}/apidoc" />
+
+    <property name="doc.junitreports" value="${doc.dir}/junitreports" />
+    <property name="doc.junitreports.xml"
+        value="dist/doc/junitreports/xml" />
+    <property name="doc.junitreports.xmlfile"
+        value="${doc.junitreports.xml}/all.xml" />
+
+    <property name="doc.checkstyle" value="${doc.dir}/checkstyle" />
+    <property name="doc.emma" value="${doc.dir}/emma" />
+
+    <!-- javac -->
+    <property name="compile.debug" value="true" />
+    <property name="compile.deprecation" value="true" />
+    <property name="compile.optimize" value="true" />
+
+    <!-- javadoc -->
+    <property name="javadoc.access" value="protected" />
+    <property name="javadoc.package" value="net.sxinfo.core" />
+
+    <!-- junit -->
+    <property name="test.failonerror" value="false" />
+
+    <!-- Checkstyle -->
+    <property name="checkstyle.config"
+        value="${src.config}/checkstyle/checkstyle_checks.xml" />
+    <property name="checkstyle.report.style"
+        value="${src.config}/checkstyle/checkstyle-noframes.xsl" />
+    <property name="checkstyle.result"
+        value="${doc.checkstyle}/checkstyle_result.xml" />
+    <property name="checkstyle.report"
+        value="${doc.checkstyle}/checkstyle_report.html" />
+
+    <!-- EMMA -->
+    <property name="build.emma" value="${build.dir}/emma" />
+    <property name="emma.enabled" value="true" />
+    <path id="run.classpath">
+        <pathelement location="${build.classes}" />
+        <!--pathelement location="${build.tests}" /-->
+    </path>
+
+    <!-- Required libs -->
+    <property name="lib.dir" value="${basedir}/lib" />
+
+    <path id="project.classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar" />
+    	<fileset dir="F:/java/apache-tomcat-7.0.42/lib" includes="**/*.jar"></fileset>
+    	    
+    </path>
+
+    <patternset id="src.files">
+        <!-- include everything we want in the src directory
+            that we didn't want in the jar itself -->
+        <include name="**/*" />
+    </patternset>
+</project>

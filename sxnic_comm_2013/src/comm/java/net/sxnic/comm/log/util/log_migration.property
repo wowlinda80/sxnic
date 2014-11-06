@@ -1,0 +1,9 @@
+srt.db.classforName = 
+srt.db.url =
+srt.db.username =
+srt.db.password = 
+
+dest.db.classforName =
+dest.db.url =
+dest.db.username =
+dest.db.password = 
