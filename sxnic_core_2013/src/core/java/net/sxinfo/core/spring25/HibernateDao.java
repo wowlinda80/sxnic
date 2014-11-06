@@ -25,10 +25,13 @@ import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.internal.CriteriaImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -415,7 +418,7 @@ public abstract class HibernateDao<T, PK extends Serializable> implements
 	 *             在分页过程中出现的异常
 	 */
 	public Page getPageByCriteria(final int page, final int pageSize,
-			HibernateCriteria hc) {
+			HibernateCriteria hc) throws PersistenceException {
 
 		Set<String> aliasList = new HashSet<String>();
 
@@ -443,6 +446,41 @@ public abstract class HibernateDao<T, PK extends Serializable> implements
 			throw new PersistenceException("在根据条件分页时出现异常", e);
 		}
 	}
+	
+	/**
+	 * 分页查询 ，主要用户级联查询
+	 * @param page 当前页码
+	 * @param pageSize 一页所包含的记录数
+	 * @param dc 查询排序类
+	 * @return
+	 */
+	public Page getPageByDetachedCriteria(int page, int pageSize,
+			DetachedCriteria dc) throws PersistenceException{
+		try {
+			int total = getRowCount(dc);
+			Criteria c = dc.getExecutableCriteria(sf.getCurrentSession());
+			c.setFirstResult((page - 1) * pageSize);
+			c.setMaxResults(pageSize);
+			List results = c.list();
+			return new Page(results, page, pageSize, total);
+		} catch (Exception e) {
+			logger.error("在根据条件分页时出现异常", e);
+			throw new PersistenceException("在根据条件分页时出现异常", e);
+		}
+	}
+	
+	public int getRowCount(final DetachedCriteria detachedCriteria) {
+		Criteria criteria = detachedCriteria.getExecutableCriteria(sf.getCurrentSession());
+		CriteriaImpl criteriaImpl = (CriteriaImpl) criteria;
+		Projection projection = criteriaImpl.getProjection();
+		int totalCount = (int) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		criteria.setProjection(projection);
+		if (projection == null) {
+			criteria.setResultTransformer(CriteriaSpecification.ROOT_ENTITY);
+		}
+		return totalCount;
+    }
+
 
 	/**
 	 * 根据 HibernateCriteria 条件，查询数据List

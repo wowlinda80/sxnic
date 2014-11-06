@@ -9,6 +9,8 @@ import net.sxinfo.core.dao.PersistenceException;
 import net.sxinfo.core.dao.WrongObjectTypeException;
 import net.sxinfo.core.dao.hibernate3.HibernateCriteria;
 
+import org.hibernate.criterion.DetachedCriteria;
+
 /**
  * Data Access Object的接口，包含了大部分DAO所需要的方法。
  * 
@@ -107,6 +109,16 @@ public interface Dao<T, PK extends Serializable> {
 	 */
 	Page getPageByCriteria(final int page, final int pageSize,
 			HibernateCriteria hc) throws PersistenceException;
+	
+	/**
+	 * 分页查询 ，主要用户级联查询
+	 * @param page 当前页码
+	 * @param pageSize 一页所包含的记录数
+	 * @param dc 查询排序类
+	 * @return
+	 */
+	Page getPageByDetachedCriteria(int page, int pageSize,
+			DetachedCriteria dc) throws PersistenceException;
 	
 	/**
 	 *  查询指定条件HibernateCriteria的List

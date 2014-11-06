@@ -3,6 +3,7 @@ package net.sxinfo.core.spring25;
 import java.io.Serializable;
 import java.util.List;
 
+import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.transaction.annotation.Transactional;
 
 import net.sxinfo.core.dao.Page;
@@ -141,6 +142,16 @@ public interface Manager<T, PK extends Serializable> {
 	@Transactional(readOnly = true)
 	Page getPageByCriteria(final int page, final int pageSize,
 			HibernateCriteria hc) throws PersistenceException;
+	
+	/**
+	 * 分页查询 ，主要用户级联查询
+	 * @param page 当前页码
+	 * @param pageSize 一页所包含的记录数
+	 * @param dc 查询排序类
+	 * @return
+	 */
+	Page getPageByDetachedCriteria(int page, int pageSize,
+			DetachedCriteria dc) throws PersistenceException;
 	
 	/**
 	 * 查询指定条件HibernateCriteria的List

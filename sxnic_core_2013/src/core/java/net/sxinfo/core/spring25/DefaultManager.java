@@ -3,12 +3,12 @@ package net.sxinfo.core.spring25;
 import java.io.Serializable;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import net.sxinfo.core.dao.Page;
 import net.sxinfo.core.dao.PersistenceException;
 import net.sxinfo.core.dao.WrongObjectTypeException;
 import net.sxinfo.core.dao.hibernate3.HibernateCriteria;
+
+import org.hibernate.criterion.DetachedCriteria;
 
 public abstract class DefaultManager<T, EntityDao extends Dao, PK extends Serializable>
 		implements Manager<T, PK> {
@@ -59,6 +59,11 @@ public abstract class DefaultManager<T, EntityDao extends Dao, PK extends Serial
 	public Page getPageByCriteria(int page, int pageSize, HibernateCriteria hc)
 			throws PersistenceException {
 		return getEntityDao().getPageByCriteria(page, pageSize, hc);
+	}
+	
+	public Page getPageByDetachedCriteria(int page, int pageSize,
+			DetachedCriteria dc) throws PersistenceException{
+		return getEntityDao().getPageByDetachedCriteria(page, pageSize, dc);
 	}
 
 
