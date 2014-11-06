@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="CORE" default="build-everything" basedir=".">
+
+    <!-- import properties (app settings, classpath, jar file locations) -->
+    
+    <import file="properties.xml" />
+
+    <target name="init" description="Initialize and evaluate conditionals">
+        <echo message="-------- Building ${name}-${version} ... --------" />
+
+        <!-- Ensure that Ant 1.6.2+ is being used -->
+        <available classname="org.apache.tools.ant.DynamicAttribute"
+                   property="ant-1.6.2" />
+        <fail unless="ant-1.6.2"
+              message="CORE requires Ant 1.6.2 for faster unit testing" />
+
+        <!-- Check that junit.jar 
+        <available classname="junit.framework.TestCase"
+                   property="junit.present" />
+        <fail unless="junit.present"
+              message="CORE requires JUnit for unit testing" />
+-->
+        <!-- Taskdefs -->
+        <taskdef resource="checkstyletask.properties"
+                 classpathref="project.classpath" />
+        <taskdef resource="emma_ant.properties"
+                 classpathref="project.classpath" />
+    </target>
+
+    <target name="prepare"
+            depends="init, clean"
+            description="Prepare directory">
+
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${build.classes}" />
+        <mkdir dir="${build.tests}" />
+        <mkdir dir="${build.emma}" />
+
+        <mkdir dir="${doc.junitreports}" />
+        <mkdir dir="${doc.junitreports.xml}" />
+        <mkdir dir="${doc.apidoc}" />
+        <mkdir dir="${doc.checkstyle}" />
+        <mkdir dir="${doc.emma}" />
+
+        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${dist.dist}" />
+    </target>
+
+    <target name="compile-java"
+            depends="prepare"
+            description="Compile main code">
+        <javac srcdir="${src.java}"
+               destdir="${build.classes}"
+               classpathref="project.classpath"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"
+               target="${src.level}"
+               source="${src.level}" includeantruntime="on">
+            <!--compilerarg value="-Xlint:unchecked"/-->
+        </javac>
+    </target>
+
+    <target name="compile-test"
+            depends="compile-java"
+            description="Compile test code">
+        <javac srcdir="${src.test}"
+               destdir="${build.tests}"
+               classpathref="project.classpath"
+               debug="${compile.debug}"
+               deprecation="false"
+               optimize="false"  includeantruntime="on">
+            <!--compilerarg value="-Xlint:unchecked"/-->
+            <classpath>
+                <pathelement location="${build.classes}" />
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="junit" depends="compile-test" description="Unit Test">
+        <junit printsummary="yes" fork="yes" haltonfailure="no">
+            <classpath>
+                <path refid="project.classpath" />
+
+                <!-- for EMMA -->
+                <pathelement location="${build.emma}" />
+
+                <pathelement location="${build.classes}" />
+                <pathelement location="${build.tests}" />
+                <pathelement location="${src.test}" />
+                <pathelement location="${src.java}" />
+            </classpath>
+
+            <!-- for EMMA -->
+            <jvmarg value="-Demma.coverage.out.file=${build.emma}/metadata.emma" />
+            <jvmarg value="-Demma.coverage.out.merge=true" />
+
+            <formatter type="xml" />
+
+            <batchtest todir="${doc.junitreports.xml}" haltonfailure="no">
+                <fileset dir="${build.tests}">
+                    <include name="**/*Test.class" />
+                    <exclude name="**/Abstract*.class" />
+                </fileset>
+            </batchtest>
+        </junit>
+
+        <junitreport tofile="${doc.junitreports.xmlfile}">
+            <fileset dir="${doc.junitreports.xml}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="noframes" todir="${doc.junitreports}" />
+        </junitreport>
+    </target>
+
+    <target name="javadoc">
+        <javadoc sourcepath="${src.java}"
+                 useexternalfile="true"
+                 destdir="${doc.apidoc}"
+                 classpathref="project.classpath"
+                 access="${javadoc.access}"
+                 packagenames="${javadoc.package}.*"
+                 version="true"
+                 author="true"
+                 use="true"
+                 windowtitle="${name} API Documentation"
+                 doctitle="${name} API Documentation"
+                 stylesheetfile="${src.etc}/jdstyle.css">
+        </javadoc>
+    </target>
+
+    <target name="checkstyle" depends="compile-java, compile-test">
+        <checkstyle config="${checkstyle.config}"
+                    failOnViolation="false"
+                    failureProperty="checkstyle.failure">
+            <formatter type="xml" tofile="${checkstyle.result}" />
+            <fileset dir="${src.java}" includes="**/*.java" />
+            <!--fileset dir="${src.test}" includes="**/*.java" /-->
+        </checkstyle>
+        <style in="${checkstyle.result}"
+               out="${checkstyle.report}"
+               style="${checkstyle.report.style}" />
+    </target>
+
+    <target name="emma" depends="compile-java, compile-test" description="EMMA">
+        <emma enabled="${emma.enabled}">
+            <instr instrpathref="run.classpath"
+                   destdir="${build.emma}"
+                   metadatafile="${build.emma}/metadata.emma"
+                   merge="true">
+
+                <filter excludes="*Exception" />
+            </instr>
+        </emma>
+    </target>
+
+    <target name="emma.report" depends="emma, junit" description="EMMA Report">
+        <emma enabled="${emma.enabled}">
+            <report sourcepath="${src.java}"
+                    sort="+block,+name,+method,+class"
+                    metrics="method:70,block:80,line:80,class:100">
+                <fileset dir="${build.emma}">
+                    <include name="*.emma" />
+                </fileset>
+
+                <html outfile="${doc.emma}/coverage.html"
+                      depth="method"
+                      columns="name,class,method,block,line" />
+            </report>
+        </emma>
+    </target>
+
+    <target name="docs"
+            depends="emma, junit, checkstyle, emma.report"
+            description="runs junit report, checkstyle and emma tasks">
+        <echo level="info">API and Reports generated successfully...</echo>
+    </target>
+
+    <target name="jar" depends="compile-java" description="Package jar">
+        <echo level="info">Packaging jar...</echo>
+        <jar destfile="${dist.jar}">
+            <manifest>
+                <attribute name="${name}-Version" value="${version}" />
+            </manifest>
+            <fileset dir="${build.classes}" includes="**/*.class" />
+        </jar>
+    </target>
+
+    <target name="copysource" description="Copy sources to dist dir">
+        <mkdir dir="${dist.src}" />
+        <copy todir="${dist.src}">
+            <fileset dir="${src.dir}">
+                <patternset refid="src.files" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="copylib" description="Copy jars to lib dir">
+        <mkdir dir="${dist.lib}" />
+        <copy todir="${dist.lib}">
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="extras" description="Copy miscellaneous files to dist dir">
+        <copy file="properties.xml" todir="${dist.dir}" />
+        <copy file="build.xml" todir="${dist.dir}" />
+        <copy file="build.properties" todir="${dist.dir}" />
+        <copy file="build.properties.sample" todir="${dist.dir}" />
+    </target>
+
+    <target name="dist"
+            depends="cleanAll, docs, jar,copysource,copylib, extras"
+            description="Build everything and package">
+        <zip destfile="${dist.dir}/${name}-${version}.zip">
+            <zipfileset prefix="${name}-${version}" dir="${dist.dir}" />
+        </zip>
+    </target>
+
+    <target name="clean">
+        <delete dir="${doc.junitreports}" />
+        <delete dir="${doc.apidoc}" />
+        <delete dir="${doc.checkstyle}" />
+        <delete dir="${doc.emma}" />
+    </target>
+
+    <target name="cleanAll" depends="clean">
+        <delete dir="${build.dir}" />
+        <delete dir="${dist.dir}" />
+    </target>
+
+    <target name="build-everything"
+            depends="compile-java,jar" />
+
+    <target name="build-everything-cc"
+            depends="cleanAll, compile-java, compile-test, docs, jar" />
+
+</project>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="sxnic_core_2013">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/core/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/core/test"/>
+        <property name="context-root" value="sxnic_core_2013"/>
+        <property name="java-output-path" value="/sxnic_core_2013/build/classes"/>
+    </wb-module>
+</project-modules>
