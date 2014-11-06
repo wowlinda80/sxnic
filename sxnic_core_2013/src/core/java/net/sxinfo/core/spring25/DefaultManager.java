@@ -10,7 +10,7 @@ import net.sxinfo.core.dao.hibernate3.HibernateCriteria;
 
 import org.hibernate.criterion.DetachedCriteria;
 
-public abstract class DefaultManager<T, EntityDao extends Dao, PK extends Serializable>
+public abstract class DefaultManager<T, EntityDao extends Dao<T, PK>, PK extends Serializable>
 		implements Manager<T, PK> {
 
 	protected abstract Dao<T, PK> getEntityDao();
@@ -126,8 +126,8 @@ public abstract class DefaultManager<T, EntityDao extends Dao, PK extends Serial
 	 * 根据SQL语句及参数查询。 sql中不能出现select * 。格式from Entity where...
 	 * @return
 	 */
-	public Page findPageBySql(int page, int pageSize, Class entityClass, String sql,final Object[] values){
-		return this.getEntityDao().findPageBySql(page, pageSize, entityClass, sql, values);
+	public Page getPageBySql(int page, int pageSize, Class<T> entityClass, String sql,final Object[] values){
+		return this.getEntityDao().getPageBySql(page, pageSize, entityClass, sql, values);
 	}
 
 }

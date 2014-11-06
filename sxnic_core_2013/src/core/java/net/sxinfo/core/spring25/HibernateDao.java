@@ -464,6 +464,7 @@ public abstract class HibernateDao<T, PK extends Serializable> implements
 			List results = c.list();
 			return new Page(results, page, pageSize, total);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("在根据条件分页时出现异常", e);
 			throw new PersistenceException("在根据条件分页时出现异常", e);
 		}
@@ -473,12 +474,12 @@ public abstract class HibernateDao<T, PK extends Serializable> implements
 		Criteria criteria = detachedCriteria.getExecutableCriteria(sf.getCurrentSession());
 		CriteriaImpl criteriaImpl = (CriteriaImpl) criteria;
 		Projection projection = criteriaImpl.getProjection();
-		int totalCount = (int) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		Long totalCount = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
 		criteria.setProjection(projection);
 		if (projection == null) {
 			criteria.setResultTransformer(CriteriaSpecification.ROOT_ENTITY);
 		}
-		return totalCount;
+		return totalCount.intValue();
     }
 
 
@@ -835,7 +836,7 @@ public abstract class HibernateDao<T, PK extends Serializable> implements
 	 * 根据SQL语句及参数查询
 	 * @return
 	 */
-	public Page findPageBySql(final int page, final int pageSize,Class entityClass,String sql,final Object[] values){
+	public Page getPageBySql(final int page, final int pageSize,Class<T> entityClass,String sql,final Object[] values){
 		
 		if(entityClass == null){
 			entityClass = this.entityClass;
@@ -856,7 +857,7 @@ public abstract class HibernateDao<T, PK extends Serializable> implements
 		// 设置取的最大记录数
 		query.setMaxResults(pageSize);
 		
-		List list = query.list();
+		List<T> list = query.list();
 		
 		return new Page(list, page, pageSize, totalResults);
 	}

@@ -28,9 +28,12 @@
 
 		<!-- 用于hibernate持久化的类 <mapping class="net.sxnic.oa.dangfa.Dangfa" /> -->
 		
-		<mapping class="net.sxinfo.core.dao.hibernate3.TestEntity" />
-		<mapping class="net.sxinfo.core.dao.hibernate3.TestEntity2" />
-		<mapping class="net.sxinfo.core.dao.hibernate3.TestEntity3" />		
+		<mapping class="net.sxinfo.core.test.entity.TestEntity" />
+		<mapping class="net.sxinfo.core.test.entity.TestEntity2" />
+		<mapping class="net.sxinfo.core.test.entity.TestEntity3" />		
+		
+		<mapping class="net.sxinfo.core.test.entity.TestData" />
+		<mapping class="net.sxinfo.core.test.entity.TestUser" />
 
 		
 		

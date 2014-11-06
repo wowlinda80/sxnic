@@ -1,10 +1,12 @@
-package net.sxinfo.core.dao.hibernate3;
+package net.sxinfo.core.test.entity;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -14,22 +16,24 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.4 $
  * @author ²ÜºÆ
  */
 @Entity
-@Table(name = "TEST_ENTITY2")
+@Table(name = "test_entity1")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class TestEntity2 implements Serializable {
+public class TestEntity implements Serializable {
 
     /**
      * Serial Version
      */
-    private static final long serialVersionUID = 4832614231359932432L;
+    private static final long serialVersionUID = -8601860054928242282L;
 
     /**
      * identifier
      */
+    @Id
+    @GeneratedValue
     private Long id;
 
     /**
@@ -38,10 +42,20 @@ public class TestEntity2 implements Serializable {
     private String name;
 
     /**
+     * clob test
+     */
+    @Lob
+    @Column(name="full_text")
+    private String fullText;
+
+    public TestEntity() {
+		super();
+	}
+
+	/**
      * @return Returns the id.
      */
-    @Id
-    @GeneratedValue
+    
     public Long getId() {
         return id;
     }
@@ -51,6 +65,26 @@ public class TestEntity2 implements Serializable {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+   
+
+    /**
+     * test
+     *
+     * @return full text
+     */
+    public String getFullText() {
+        return fullText;
+    }
+
+    /**
+     * test
+     *
+     * @param fullText
+     */
+    public void setFullText(String fullText) {
+        this.fullText = fullText;
     }
 
     /**
@@ -72,11 +106,11 @@ public class TestEntity2 implements Serializable {
      */
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof TestEntity2)) {
+        if (!(o instanceof TestEntity)) {
             return false;
         }
 
-        final TestEntity2 t = (TestEntity2) o;
+        final TestEntity t = (TestEntity) o;
 
         return new EqualsBuilder().append(id, t.getId()).append(name,
             t.getName()).isEquals();

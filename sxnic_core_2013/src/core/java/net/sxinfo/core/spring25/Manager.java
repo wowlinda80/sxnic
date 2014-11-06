@@ -185,5 +185,5 @@ public interface Manager<T, PK extends Serializable> {
 	 * @return
 	 */
 	@Transactional(readOnly = true)
-	Page findPageBySql(int page, int pageSize, Class<T> entityClass, String sql,final Object[] values);
+	Page getPageBySql(int page, int pageSize, Class<T> entityClass, String sql,final Object[] values);
 }

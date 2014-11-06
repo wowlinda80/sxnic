@@ -7,10 +7,17 @@ import net.sxinfo.core.dao.Page;
 import net.sxinfo.core.dao.hibernate3.HibernateCriteria;
 import net.sxinfo.core.dao.hibernate3.HibernateDaoUtils;
 import net.sxinfo.core.dao.hibernate3.HibernateOrder;
-import net.sxinfo.core.dao.hibernate3.TestEntity2;
 import net.sxinfo.core.spring25.test.SpringTxTestCase;
+import net.sxinfo.core.test.entity.TestData;
+import net.sxinfo.core.test.entity.TestEntity2;
+import net.sxinfo.core.test.entity.TestUser;
+import net.sxinfo.core.test.manager.ManagerExtra;
+import net.sxinfo.core.test.manager.TestDataManager;
+import net.sxinfo.core.test.manager.TestUserManager;
 
+import org.hibernate.FetchMode;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -28,6 +35,10 @@ public class DefaultManagerTest extends SpringTxTestCase {
 
 	@Autowired
 	private ManagerExtra extraManager;
+	@Autowired
+	private TestUserManager userManager;
+	@Autowired
+	private TestDataManager dataManager;
 
 	@Test
 	public void testSave() {
@@ -211,6 +222,67 @@ public class DefaultManagerTest extends SpringTxTestCase {
 		extraManager.clear();
 
 		assertEquals(0, extraManager.getAll().size());
+	}
+	
+	@Test
+	public void getPageByDetachedCriteria() {
+		
+		TestUser user = new TestUser();
+		user.setUserName("user1");
+		userManager.save(user);
+		user = new TestUser();
+		user.setUserName("user2");
+		userManager.save(user);
+		
+		TestData data = new TestData();
+		data.setStr1("1111");
+		data.setUser(user);
+		dataManager.save(data);
+		
+		DetachedCriteria hc = DetachedCriteria.forClass(TestData.class);
+		hc.setFetchMode("user", FetchMode.JOIN);  
+		hc.createAlias("user", "user");	
+		
+		hc.add(Restrictions.eq("user.userName", "user2"));
+
+		Page page = dataManager.getPageByDetachedCriteria(1, 20, hc);
+
+		assertEquals(1, page.getTotalResults());
+		assertEquals(1, page.getTotalPages());
+
+		dataManager.clear();
+
+		assertEquals(0, dataManager.getAll().size());
+	}
+	
+	@Test
+	public void findPageBySql() {
+		
+		TestUser user = new TestUser();
+		user.setUserName("user1");
+		userManager.save(user);
+		user = new TestUser();
+		user.setUserName("user2");
+		userManager.save(user);
+		
+		TestData data = new TestData();
+		data.setStr1("1111");
+		data.setUser(user);
+		dataManager.save(data);
+		
+		data = new TestData();
+		data.setStr1("1111222");
+		data.setUser(user);
+		dataManager.save(data);
+		
+		Page page = dataManager.getPageBySql(1, 20, TestData.class, "from TestData where user.userName=?", new Object[]{"user2"});
+
+		assertEquals(2, page.getTotalResults());
+		assertEquals(1, page.getTotalPages());
+
+		dataManager.clear();
+
+		assertEquals(0, dataManager.getAll().size());
 	}
 
 	@Test

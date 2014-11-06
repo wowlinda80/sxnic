@@ -1,4 +1,4 @@
-package net.sxinfo.core.dao.hibernate3;
+package net.sxinfo.core.test.entity;
 
 import java.util.Date;
 

@@ -154,6 +154,6 @@ public interface Dao<T, PK extends Serializable> {
 	 * 根据SQL语句及参数查询。 sql中不能出现select * 。格式from Entity where...
 	 * @return
 	 */
-	Page findPageBySql(int page, int pageSize, Class entityClass, String sql,final Object[] values);
+	Page getPageBySql(int page, int pageSize, Class<T> entityClass, String sql,final Object[] values);
 
 }

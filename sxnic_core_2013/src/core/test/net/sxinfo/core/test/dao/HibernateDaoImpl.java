@@ -1,6 +1,7 @@
-package net.sxinfo.core.spring25;
+package net.sxinfo.core.test.dao;
 
-import net.sxinfo.core.dao.hibernate3.TestEntity2;
+import net.sxinfo.core.spring25.HibernateDao;
+import net.sxinfo.core.test.entity.TestEntity2;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

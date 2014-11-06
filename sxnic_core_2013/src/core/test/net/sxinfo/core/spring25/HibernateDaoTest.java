@@ -6,8 +6,9 @@ import net.sxinfo.core.dao.Page;
 import net.sxinfo.core.dao.hibernate3.HibernateCriteria;
 import net.sxinfo.core.dao.hibernate3.HibernateDaoUtils;
 import net.sxinfo.core.dao.hibernate3.HibernateOrder;
-import net.sxinfo.core.dao.hibernate3.TestEntity2;
 import net.sxinfo.core.spring25.test.SpringTxTestCase;
+import net.sxinfo.core.test.dao.DaoExtra;
+import net.sxinfo.core.test.entity.TestEntity2;
 
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
@@ -197,7 +198,7 @@ public class HibernateDaoTest extends SpringTxTestCase {
 
 		assertEquals(3, list.size());
 		
-		Page page = extraDao.findPageBySql(1, 10, TestEntity2.class, "from TestEntity2 where name <> ? ", new Object[]{"entity2"});
+		Page page = extraDao.getPageBySql(1, 10, TestEntity2.class, "from TestEntity2 where name <> ? ", new Object[]{"entity2"});
 		
 		assertEquals(2,page.getTotalResults());
 		
