@@ -111,7 +111,7 @@ public interface Dao<T, PK extends Serializable> {
 			HibernateCriteria hc) throws PersistenceException;
 	
 	/**
-	 * 分页查询 ，主要用户级联查询
+	 * 分页查询 ，主要级联查询
 	 * @param page 当前页码
 	 * @param pageSize 一页所包含的记录数
 	 * @param dc 查询排序类
@@ -126,6 +126,13 @@ public interface Dao<T, PK extends Serializable> {
 	 * @return
 	 */
 	List<T> getByCriteria(HibernateCriteria hc);
+	
+	/**
+	 * 根据DetachedCriteria查询List
+	 * @param dc
+	 * @return
+	 */
+	List<T> getByDetachedCriteria(DetachedCriteria dc);
 	
 	/**
 	 * 按属性查找对象列表,匹配方式为相等.

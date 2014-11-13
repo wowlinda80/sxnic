@@ -162,6 +162,14 @@ public interface Manager<T, PK extends Serializable> {
 	List<T> getByCriteria(HibernateCriteria hc);
 	
 	/**
+	 * 根据DetachedCriteria查询List
+	 * @param dc
+	 * @return
+	 */
+	@Transactional(readOnly = true)
+	List<T> getByDetachedCriteria(DetachedCriteria dc);
+	
+	/**
 	 * 按属性查找对象列表,匹配方式为相等.
 	 */
 	@Transactional(readOnly = true)

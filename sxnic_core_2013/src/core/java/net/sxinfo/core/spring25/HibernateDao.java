@@ -21,6 +21,7 @@ import net.sxinfo.core.util.ReflectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
@@ -481,6 +482,16 @@ public abstract class HibernateDao<T, PK extends Serializable> implements
 		}
 		return totalCount.intValue();
     }
+	
+	public List<T> getByDetachedCriteria(DetachedCriteria dc){
+		try {
+			Criteria c = dc.getExecutableCriteria(sf.getCurrentSession());
+			return c.list();
+		} catch (Exception e) {			
+			logger.error("在根据条件查询时出现异常", e);
+			throw new PersistenceException("在根据条件查询时出现异常：", e);
+		}		
+	}
 
 
 	/**

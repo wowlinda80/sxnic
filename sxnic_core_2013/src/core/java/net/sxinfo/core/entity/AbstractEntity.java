@@ -47,8 +47,8 @@ public abstract class AbstractEntity implements Serializable {
     /**
      * 创建时间
      */
-    @Index(name = "creationdate_index")
-    @Column(nullable = false)
+    @Index(name = "_creationdate_index")
+    @Column(name="creationdate_",nullable = false)
     protected Date creationDate;
     
     protected Date lastUpdateDate;

@@ -100,6 +100,11 @@ public abstract class DefaultManager<T, EntityDao extends Dao<T, PK>, PK extends
 		return this.getEntityDao().getByCriteria(hc);
 	}
 	
+	
+	public List<T> getByDetachedCriteria(DetachedCriteria dc){
+		return this.getEntityDao().getByDetachedCriteria(dc);
+	}
+	
 	/**
 	 * 按属性查找对象列表,匹配方式为相等.
 	 */

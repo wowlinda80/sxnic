@@ -19,9 +19,6 @@ import org.hibernate.annotations.Index;
 /**
  * Abstract Entity Object，包括所有实体对象中 相同的部分。
  * 不同的是，继承自本类的实体id为数字序列型，而不是UUID。
- * 
- * @version $Revision$
- * @author 曹浩
  */
 @MappedSuperclass
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -36,19 +33,28 @@ public abstract class AbstractEntitySeq implements Serializable {
     @TableGenerator(name = "empGen", table = "id_gen", pkColumnName = "gen_key", valueColumnName = "gen_value", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "empGen")
     protected Long id;
-
+    
     /**
      * 创建时间
      */
-    @Index(name = "creationdate_index")
-    @Column(nullable = false)
+    @Index(name = "_creationdate_index")
+    @Column(name="creationdate_",nullable = false)
     protected Date creationDate;
+    
+    protected Date lastUpdateDate;
+    
+    @Column(length = 30)
+    protected String lastEditor;
+    
+    @Column(nullable = false)
+    protected boolean enabled;
 
     /**
      * 默认构造器
      */
     public AbstractEntitySeq() {
         creationDate = new Date();
+        lastUpdateDate = new Date();
     }
 
     /**
@@ -102,4 +108,28 @@ public abstract class AbstractEntitySeq implements Serializable {
         return new HashCodeBuilder().append(id).append(creationDate)
                 .toHashCode();
     }
+
+	public Date getLastUpdateDate() {
+		return lastUpdateDate;
+	}
+
+	public void setLastUpdateDate(Date lastUpdateDate) {
+		this.lastUpdateDate = lastUpdateDate;
+	}
+
+	public String getLastEditor() {
+		return lastEditor;
+	}
+
+	public void setLastEditor(String lastEditor) {
+		this.lastEditor = lastEditor;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 }
