@@ -89,66 +89,34 @@ public class BaseCodeImportUtils {
 			String[] m = line.split(",");
 
 			log.debug(m[0] + "-----" + m[1]);
-			BaseCode bc = new BaseCode();
-			bc.setSortCode(m[0].trim());
-			bc.setSortName(m[1].trim());
-			bc.setInfoCode(m[2].trim());
-			bc.setInfoName(m[3].trim());
-			if (m.length > 4) {
-				bc.setInfoIndex(m[4].trim());
-			}
-			bc.setCyear(String.valueOf(Calendar.getInstance()
-					.get(Calendar.YEAR)));
-
-			basecodeManager.save(bc);
-		}
-	}
-
-	/**
-	 * 导入基本码表
-	 * 
-	 * @param basecodeManager
-	 *            基本码表的基本业务类
-	 * @param lines
-	 *            数据集
-	 * @param clear
-	 *            如果clear为true则表示本方法外部已经对表进行了清空操作，则在本方法内部不检测重复，直接插入。
-	 *            如果clear为false则在本法内部需要检验每条数据是否跟现有表中的数据重复，如果有重复则不插入，否则插入
-	 *            如果clear为null 则视为false
-	 */
-	public static void importBaseCode(BaseCodeManager basecodeManager,
-			String[] lines, boolean clear) {
-
-		for (String line : lines) {
-			if (StringUtils.isBlank(line)) {
-				continue;
-			}
-
-			String[] m = line.split(",");
-
-			if (!clear) {
-				BaseCode b = basecodeManager.getBaseCode(m[0].trim(), m[1]
-						.trim(), m[2].trim(), m[3].trim());
-				if (b != null) {
-					continue;
+			BaseCode bc = basecodeManager.getBaseCode(m[0].trim(), m[2].trim());
+			if(bc ==null){
+				bc = new BaseCode();
+				bc.setSortCode(m[0].trim());
+				bc.setSortName(m[1].trim());
+				bc.setInfoCode(m[2].trim());
+				bc.setInfoName(m[3].trim());
+				if (m.length > 4) {
+					bc.setInfoIndex(m[4].trim());
 				}
-			}
-
-			log.debug(m[0] + "-----" + m[1]);
-			BaseCode bc = new BaseCode();
-			bc.setSortCode(m[0].trim());
-			bc.setSortName(m[1].trim());
-			bc.setInfoCode(m[2].trim());
-			bc.setInfoName(m[3].trim());
-			if (m.length > 4) {
-				bc.setInfoIndex(m[4].trim());
-			}
-			bc.setCyear(String.valueOf(Calendar.getInstance()
-					.get(Calendar.YEAR)));
+				bc.setCyear(String.valueOf(Calendar.getInstance()
+						.get(Calendar.YEAR)));
+				
+				log.debug("===create basecode success==="+bc.getSortCode()+"==="+bc.getInfoCode());
+				
+			}else{
+				bc.setSortCode(m[0].trim());
+				bc.setSortName(m[1].trim());
+				bc.setInfoCode(m[2].trim());
+				bc.setInfoName(m[3].trim());
+				if (m.length > 4) {
+					bc.setInfoIndex(m[4].trim());
+				}
+				log.debug("===update basecode success==="+bc.getSortCode()+"==="+bc.getInfoCode());
+			}			
 
 			basecodeManager.save(bc);
 		}
-
 	}
 
 }

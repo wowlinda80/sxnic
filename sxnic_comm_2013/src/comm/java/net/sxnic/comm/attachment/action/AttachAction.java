@@ -1,11 +1,5 @@
 package net.sxnic.comm.attachment.action;
-/**
- *  
- *
- * @version $Revision$
- * @author 吕盛槐  2011-10-05
- */
- 
+
 import net.sxnic.comm.CommActionSupport;
 import net.sxnic.comm.attachment.Attachment;
 import net.sxnic.comm.attachment.AttachmentManager;

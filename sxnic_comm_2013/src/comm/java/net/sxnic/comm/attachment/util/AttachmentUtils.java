@@ -28,8 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AttachmentUtils {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(AttachmentUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(AttachmentUtils.class);
 
 	/**
 	 * 验证附件大小及后缀名
@@ -44,99 +43,46 @@ public class AttachmentUtils {
 	 *            文件大小的属性文件配置名
 	 * @return 返回错误信息，如果没有错误则返回空。
 	 */
-	public static String checkAttachment(File file, String fileName,
-			String[] types, String fileSizeProperty) {
+	public static String checkAttachment(File file, String fileName, String[] types, String fileSizeProperty)
+			throws FileSizException, FileTypeException {
 
 		if (file == null) {
 			return "";
 		}
 
-		String sfiletype="";
-		
+		String sfiletype = "";
+
 		if (types == null || types.length <= 0) {
-			types = StringUtils.split(
-					CommConstant.PROPERTY_MAP.get("upload.file.type"), ",");
-			sfiletype=CommConstant.PROPERTY_MAP.get("upload.file.type");
-		}else{
-			sfiletype= Arrays.toString(types);
+			types = StringUtils.split(CommConstant.PROPERTY_MAP.get("upload.file.type"), ",");
+			sfiletype = CommConstant.PROPERTY_MAP.get("upload.file.type");
+		} else {
+			sfiletype = Arrays.toString(types);
 		}
 
 		long size = 0L;
 		if (StringUtils.isBlank(fileSizeProperty)) {
-			size = Long.parseLong(CommConstant.PROPERTY_MAP
-					.get("upload.file.size.default")) * 1024 * 1024;
-		} else if (StringUtils.isNotBlank(CommConstant.PROPERTY_MAP
-				.get(fileSizeProperty))) {
-			size = Long.parseLong(CommConstant.PROPERTY_MAP
-					.get(fileSizeProperty)) * 1024 * 1024;
-		}else{
-			size = Long.parseLong(CommConstant.PROPERTY_MAP
-					.get("upload.file.size.default")) * 1024 * 1024;
+			size = Long.parseLong(CommConstant.PROPERTY_MAP.get("upload.file.size.default")) * 1024 * 1024;
+		} else if (StringUtils.isNotBlank(CommConstant.PROPERTY_MAP.get(fileSizeProperty))) {
+			size = Long.parseLong(CommConstant.PROPERTY_MAP.get(fileSizeProperty)) * 1024 * 1024;
+		} else {
+			size = Long.parseLong(CommConstant.PROPERTY_MAP.get("upload.file.size.default")) * 1024 * 1024;
 		}
 
 		if (file.length() > size) {
-			return "附件超过规定大小，请确认附件小于"
-					+ size / (1024*1024) + "MB。";
+			throw new FileSizException("附件超过规定大小，请确认附件小于" + size / (1024 * 1024) + "MB。");
 		}
 
 		if (StringUtils.isBlank(fileName)) {
-			return "文件名错误";
+			throw new FileTypeException("文件名错误，或者文件为空。");
 		}
 
-		if (!ArrayUtils.contains(types,
-				StringUtils.substringAfterLast(fileName, ".").toLowerCase())) {
-			return "附件类型错误，请确认附件类型为："
-					+ sfiletype
-					+ "中的一种。";
+		if (!ArrayUtils.contains(types, StringUtils.substringAfterLast(fileName, ".").toLowerCase())) {
+			throw new FileTypeException("附件类型错误，请确认附件类型为：" + sfiletype + "中的一种。");
 		}
 
 		return "";
 	}
-	
-	/**
-	 * 验证附件大小及后缀名
-	 * 
-	 * @param file
-	 *            附件
-	 * @param fileName
-	 *            附件名
-	 * @param types
-	 *            后缀名数组，为空则从属性表中提起默认配置
-	 * @param fileSizeProperty
-	 *            文件大小的属性文件配置名
-	 * @return 返回错误信息，如果没有错误则返回空。
-	 */
-	public static String checkAttachmentMsg(File file, String fileName,
-			String[] types, String fileSizeProperty) {
 
-		if (file == null) {
-			return "";
-		}
-
-		String sfiletype="";
-		
-		if (types == null || types.length <= 0) {
-			types = StringUtils.split(
-					CommConstant.PROPERTY_MAP.get("upload.file.type"), ",");
-			sfiletype=CommConstant.PROPERTY_MAP.get("upload.file.type");
-		}else{
-			sfiletype= Arrays.toString(types);
-		}
-
-		long size = 0L;
-		size = 10 * 1024 * 1024;
-
-		if (file.length() > size) {
-			return "cabinetUploadSizeError";
-		}
-
-		if (!ArrayUtils.contains(types,
-				StringUtils.substringAfterLast(fileName, ".").toLowerCase())) {
-			return "catinetUploadTypeError";
-		}
-
-		return "";
-	}
 
 	/**
 	 * 验证附件的合法性 主要是文件类型和大小
@@ -153,33 +99,27 @@ public class AttachmentUtils {
 	 * @throws FileTypeException
 	 *             文件类型异常
 	 */
-	public static boolean checkAttachment(File file, String fileName,
-			String[] types, long size) throws FileSizException,
-			FileTypeException {
+	public static boolean checkAttachment(File file, String fileName, String[] types, long size)
+			throws FileSizException, FileTypeException {
 
 		if (file == null) {
 			return false;
 		}
 
 		if (types == null || types.length <= 0) {
-			types = StringUtils.split(
-					(String) CommConstant.PROPERTY_MAP.get("upload.file.type"),
-					",");
+			types = StringUtils.split((String) CommConstant.PROPERTY_MAP.get("upload.file.type"), ",");
 		}
 
 		if (size == 0) {
-			size = Long.parseLong(CommConstant.PROPERTY_MAP
-					.get("upload.file.maxsize")) * 1024;
+			size = Long.parseLong(CommConstant.PROPERTY_MAP.get("upload.file.maxsize")) * 1024*1024;
 		}
 
 		if (file.length() > size) {
-
-			throw new FileSizException();
+			throw new FileSizException("附件超过规定大小，请确认附件小于" + size + "MB。");
 		}
 
-		if (!ArrayUtils.contains(types,
-				StringUtils.substringAfterLast(fileName.toLowerCase(), "."))) {
-			throw new FileTypeException();
+		if (!ArrayUtils.contains(types, StringUtils.substringAfterLast(fileName.toLowerCase(), "."))) {
+			throw new FileTypeException("附件类型错误。");
 		}
 
 		return true;
@@ -197,8 +137,7 @@ public class AttachmentUtils {
 	 * @return 附件对象
 	 * @throws IOException
 	 */
-	public static Attachment saveAttachment(File file, String oriname,
-			String enityName) throws IOException {
+	public static Attachment saveAttachment(File file, String oriname, String enityName) throws IOException {
 
 		Attachment attachment = new Attachment();
 
@@ -206,11 +145,9 @@ public class AttachmentUtils {
 			return null;
 		}
 
-		String fileName = CommUtils.crtRandomUUID() + "."
-				+ StringUtils.substringAfterLast(oriname, ".");
+		String fileName = CommUtils.crtRandomUUID() + "." + StringUtils.substringAfterLast(oriname, ".");
 
-		String yearMonth = CommUtils.getCurrYear() + "_"
-				+ CommUtils.getCurrMonth();
+		String yearMonth = CommUtils.getCurrYear() + "_" + CommUtils.getCurrMonth();
 
 		// 文件存放的全部路径
 		String destFile = "";
@@ -223,8 +160,7 @@ public class AttachmentUtils {
 			// 绝对路径
 			if (tempPath.startsWith("DIR:")) {
 				tempPath = StringUtils.remove(tempPath, "DIR:");
-				filePath = enityName + File.separator + yearMonth
-						+ File.separator + fileName;
+				filePath = enityName + File.separator + yearMonth + File.separator + fileName;
 				destFile = tempPath + filePath;
 			} else {
 				// 相对路径处理
@@ -234,20 +170,17 @@ public class AttachmentUtils {
 				if (!tempPath.endsWith("\\")) {
 					tempPath = tempPath + File.separator;
 				}
-				destFile = System.getProperty("webapp.root") + tempPath
-						+ enityName + File.separator + yearMonth
+				destFile = System.getProperty("webapp.root") + tempPath + enityName + File.separator + yearMonth
 						+ File.separator + fileName;
 			}
 		} else if (CommUtils.isLinuxOs()) {
-			String tempPath = CommConstant.PROPERTY_MAP
-					.get("upload.file.path.linux");
+			String tempPath = CommConstant.PROPERTY_MAP.get("upload.file.path.linux");
 
 			tempPath = StringUtils.replace(tempPath, "\\", "/");
 			// 绝对路径
 			if (tempPath.startsWith("DIR:")) {
 				tempPath = StringUtils.remove(tempPath, "DIR:");
-				filePath = enityName + File.separator + yearMonth
-						+ File.separator + fileName;
+				filePath = enityName + File.separator + yearMonth + File.separator + fileName;
 				destFile = tempPath + filePath;
 			} else {
 				// 相对路径处理
@@ -257,23 +190,19 @@ public class AttachmentUtils {
 				if (!tempPath.endsWith("\\")) {
 					tempPath = tempPath + File.separator;
 				}
-				destFile = System.getProperty("webapp.root") + tempPath
-						+ enityName + File.separator + yearMonth
+				destFile = System.getProperty("webapp.root") + tempPath + enityName + File.separator + yearMonth
 						+ File.separator + fileName;
 			}
 		}
 
 		try {
 			FileUtils.copyFile(file, new File(destFile));
-			logger.debug("====copy file:" + file.getAbsolutePath() + " to "
-					+ destFile + " success!====");
+			logger.debug("====copy file:" + file.getAbsolutePath() + " to " + destFile + " success!====");
 			attachment.setOriName(oriname);
 			attachment.setFilePath(filePath);
 			attachment.setSuffix(CommUtils.getSuffixByFileName(oriname));
 		} catch (IOException e) {
-
-			logger.error("===copy file:" + file.getAbsolutePath() + " to "
-					+ destFile + " error!====" + e.toString());
+			logger.error("===copy file:" + file.getAbsolutePath() + " to " + destFile + " error!====" + e.toString());
 			throw e;
 
 		}
@@ -296,8 +225,8 @@ public class AttachmentUtils {
 	 * @return 附件对象
 	 * @throws IOException
 	 */
-	public static Attachment saveAttachment(File file, String oriname,
-			String enityName, String entityId, String type) throws IOException {
+	public static Attachment saveAttachment(File file, String oriname, String enityName, String entityId, String type)
+			throws IOException {
 
 		Attachment attachment = new Attachment();
 
@@ -305,11 +234,9 @@ public class AttachmentUtils {
 			return null;
 		}
 
-		String fileName = CommUtils.crtRandomUUID() + "."
-				+ StringUtils.substringAfterLast(oriname, ".");
+		String fileName = CommUtils.crtRandomUUID() + "." + StringUtils.substringAfterLast(oriname, ".");
 
-		String yearMonth = CommUtils.getCurrYear() + "_"
-				+ CommUtils.getCurrMonth();
+		String yearMonth = CommUtils.getCurrYear() + "_" + CommUtils.getCurrMonth();
 
 		// 文件存放的全部路径
 		String destFile = "";
@@ -317,15 +244,13 @@ public class AttachmentUtils {
 		String filePath = "";
 
 		if (CommUtils.isWindowsOs()) {
-			String tempPath = (String) CommConstant.PROPERTY_MAP
-					.get("upload.file.path");
+			String tempPath = (String) CommConstant.PROPERTY_MAP.get("upload.file.path");
 
 			// tempPath = StringUtils.replace(tempPath, "/", "\\");
 			// 绝对路径
 			if (tempPath.startsWith("DIR:")) {
 				tempPath = StringUtils.remove(tempPath, "DIR:");
-				filePath = enityName + File.separator + yearMonth
-						+ File.separator + fileName;
+				filePath = enityName + File.separator + yearMonth + File.separator + fileName;
 				destFile = tempPath + filePath;
 			} else {
 				// 相对路径处理
@@ -335,20 +260,17 @@ public class AttachmentUtils {
 				if (!tempPath.endsWith("\\")) {
 					tempPath = tempPath + File.separator;
 				}
-				destFile = System.getProperty("webapp.root") + tempPath
-						+ enityName + File.separator + yearMonth
+				destFile = System.getProperty("webapp.root") + tempPath + enityName + File.separator + yearMonth
 						+ File.separator + fileName;
 			}
 		} else if (CommUtils.isLinuxOs()) {
-			String tempPath = (String) CommConstant.PROPERTY_MAP
-					.get("upload.file.path.linux");
+			String tempPath = (String) CommConstant.PROPERTY_MAP.get("upload.file.path.linux");
 
 			tempPath = StringUtils.replace(tempPath, "\\", "/");
 			// 绝对路径
 			if (tempPath.startsWith("DIR:")) {
 				tempPath = StringUtils.remove(tempPath, "DIR:");
-				filePath = enityName + File.separator + yearMonth
-						+ File.separator + fileName;
+				filePath = enityName + File.separator + yearMonth + File.separator + fileName;
 				destFile = tempPath + filePath;
 			} else {
 				// 相对路径处理
@@ -358,24 +280,21 @@ public class AttachmentUtils {
 				if (!tempPath.endsWith("\\")) {
 					tempPath = tempPath + File.separator;
 				}
-				destFile = System.getProperty("webapp.root") + tempPath
-						+ enityName + File.separator + yearMonth
+				destFile = System.getProperty("webapp.root") + tempPath + enityName + File.separator + yearMonth
 						+ File.separator + fileName;
 			}
 		}
 
 		try {
 			FileUtils.copyFile(file, new File(destFile));
-			logger.warn("====copy file:" + file.getAbsolutePath() + " to "
-					+ destFile + " success!====");
+			logger.warn("====copy file:" + file.getAbsolutePath() + " to " + destFile + " success!====");
 			attachment.setOriName(oriname);
 			attachment.setFilePath(filePath);
 			attachment.setEntityId(entityId);
 			attachment.setType(type);
 			attachment.setSuffix(CommUtils.getSuffixByFileName(oriname));
 		} catch (IOException e) {
-			logger.error("===copy file:" + file.getAbsolutePath() + " to "
-					+ destFile + " error!====" + e.toString());
+			logger.error("===copy file:" + file.getAbsolutePath() + " to " + destFile + " error!====" + e.toString());
 			throw e;
 
 		}
@@ -391,8 +310,7 @@ public class AttachmentUtils {
 		String basePath = "";
 
 		if (CommUtils.isWindowsOs()) {
-			basePath = (String) CommConstant.PROPERTY_MAP
-					.get("upload.file.path");
+			basePath = (String) CommConstant.PROPERTY_MAP.get("upload.file.path");
 			if (basePath.startsWith("DIR:")) {
 				basePath = StringUtils.remove(basePath, "DIR:");
 			}
@@ -402,8 +320,7 @@ public class AttachmentUtils {
 			}
 
 		} else if (CommUtils.isLinuxOs()) {
-			basePath = (String) CommConstant.PROPERTY_MAP
-					.get("upload.file.path.linux");
+			basePath = (String) CommConstant.PROPERTY_MAP.get("upload.file.path.linux");
 			if (basePath.startsWith("DIR:")) {
 				basePath = StringUtils.remove(basePath, "DIR:");
 			}
@@ -423,7 +340,7 @@ public class AttachmentUtils {
 	 *            所在文件实体的别名，包名。 notice,recievedoc,senddoc...
 	 * @param attach
 	 *            附件实体
-	 * @return  下载路径
+	 * @return 下载路径
 	 */
 	public static String getDownloadPath(String alias, Attachment attach) {
 
@@ -433,12 +350,10 @@ public class AttachmentUtils {
 
 		String url = "";
 
-		if (PropertyUtil.DOWNLOAD_FILE_TYPE_TOMCAT
-				.equals(CommConstant.PROPERTY_MAP
-						.get(PropertyUtil.DOWNLOAD_FILE_TYPE))
-				|| PropertyUtil.DOWNLOAD_FILE_TYPE_APACHE
-						.equals(CommConstant.PROPERTY_MAP
-								.get(PropertyUtil.DOWNLOAD_FILE_TYPE))) {
+		if (PropertyUtil.DOWNLOAD_FILE_TYPE_TOMCAT.equals(CommConstant.PROPERTY_MAP
+				.get(PropertyUtil.DOWNLOAD_FILE_TYPE))
+				|| PropertyUtil.DOWNLOAD_FILE_TYPE_APACHE.equals(CommConstant.PROPERTY_MAP
+						.get(PropertyUtil.DOWNLOAD_FILE_TYPE))) {
 			// tomcat apache
 			url = PropertyUtil.getProperty("doc.download.path");
 
@@ -448,16 +363,15 @@ public class AttachmentUtils {
 				Calendar c = Calendar.getInstance();
 				c.setTime(attach.getCreationDate());
 
-				url = url + alias + "/" + String.valueOf(c.get(Calendar.YEAR))+"_"+String.valueOf(c.get(Calendar.MONTH)+1)
-						+ "/" + StringUtils.substringAfterLast(attach.getFilePath(), "\\");
+				url = url + alias + "/" + String.valueOf(c.get(Calendar.YEAR)) + "_"
+						+ String.valueOf(c.get(Calendar.MONTH) + 1) + "/"
+						+ StringUtils.substringAfterLast(attach.getFilePath(), "\\");
 			}
 
-		} else if (PropertyUtil.DOWNLOAD_FILE_TYPE_STRUTS
-				.equals(CommConstant.PROPERTY_MAP
-						.get(PropertyUtil.DOWNLOAD_FILE_TYPE))) {
+		} else if (PropertyUtil.DOWNLOAD_FILE_TYPE_STRUTS.equals(CommConstant.PROPERTY_MAP
+				.get(PropertyUtil.DOWNLOAD_FILE_TYPE))) {
 			// struts
-			url = CommConstant.SYSTEM_CONTEXTPATH + "/comm/download.jspa?id="
-					+ attach.getId();
+			url = CommConstant.SYSTEM_CONTEXTPATH + "/comm/download.jspa?id=" + attach.getId();
 
 		} else {
 			url = "get attachment url error";
@@ -473,8 +387,7 @@ public class AttachmentUtils {
 	 *            附件列表
 	 * @throws IOException
 	 */
-	public static void deleteAttachments(List<Attachment> aList)
-			throws IOException {
+	public static void deleteAttachments(List<Attachment> aList) throws IOException {
 		if (aList == null || aList.size() == 0) {
 			return;
 		}
@@ -491,8 +404,7 @@ public class AttachmentUtils {
 	 *            附件列表
 	 * @throws IOException
 	 */
-	public static void deleteAttachments(Set<Attachment> aset)
-			throws IOException {
+	public static void deleteAttachments(Set<Attachment> aset) throws IOException {
 		if (aset == null || aset.size() == 0) {
 			return;
 		}
@@ -516,15 +428,13 @@ public class AttachmentUtils {
 
 		String base_upload_path = "";
 		if (CommUtils.isWindowsOs()) {
-			base_upload_path = CommConstant.PROPERTY_MAP
-					.get("upload.file.path");
+			base_upload_path = CommConstant.PROPERTY_MAP.get("upload.file.path");
 		} else {
-			base_upload_path = CommConstant.PROPERTY_MAP
-					.get("upload.file.path.linux");
+			base_upload_path = CommConstant.PROPERTY_MAP.get("upload.file.path.linux");
 		}
 
-		base_upload_path = StringUtils.startsWith(base_upload_path, "DIR:") ? StringUtils
-				.removeStart(base_upload_path, "DIR:") : base_upload_path;
+		base_upload_path = StringUtils.startsWith(base_upload_path, "DIR:") ? StringUtils.removeStart(base_upload_path,
+				"DIR:") : base_upload_path;
 
 		String srcpath = base_upload_path + a.getFilePath();
 
@@ -544,41 +454,33 @@ public class AttachmentUtils {
 	 *            附件对象
 	 * @throws IOException
 	 */
-	public static void syn_upload(String base_upload_path, Attachment a)
-			throws IOException {
+	public static void syn_upload(String base_upload_path, Attachment a) throws IOException {
 		if ("true".equals(CommConstant.PROPERTY_MAP.get("attachment.syn"))) {
 
 			if (StringUtils.isBlank(base_upload_path)) {
 				if (CommUtils.isWindowsOs()) {
-					base_upload_path = CommConstant.PROPERTY_MAP
-							.get("upload.file.path");
+					base_upload_path = CommConstant.PROPERTY_MAP.get("upload.file.path");
 				} else {
-					base_upload_path = CommConstant.PROPERTY_MAP
-							.get("upload.file.path.linux");
+					base_upload_path = CommConstant.PROPERTY_MAP.get("upload.file.path.linux");
 				}
 
-				base_upload_path = StringUtils.startsWith(base_upload_path,
-						"DIR:") ? StringUtils.removeStart(base_upload_path,
-						"DIR:") : base_upload_path;
+				base_upload_path = StringUtils.startsWith(base_upload_path, "DIR:") ? StringUtils.removeStart(
+						base_upload_path, "DIR:") : base_upload_path;
 			}
 
 			String destpath = "";
 
 			if (CommUtils.isWindowsOs()) {
-				destpath = CommConstant.PROPERTY_MAP
-						.get("attachment.syn.path.windows");
+				destpath = CommConstant.PROPERTY_MAP.get("attachment.syn.path.windows");
 			} else {
-				destpath = CommConstant.PROPERTY_MAP
-						.get("attachment.syn.path.linux");
+				destpath = CommConstant.PROPERTY_MAP.get("attachment.syn.path.linux");
 			}
 
-			destpath = StringUtils.startsWith(destpath, "DIR:") ? StringUtils
-					.removeStart(destpath, "DIR:") : destpath;
+			destpath = StringUtils.startsWith(destpath, "DIR:") ? StringUtils.removeStart(destpath, "DIR:") : destpath;
 
 			destpath = destpath + a.getFilePath();
 
-			FileUtils.copyFile(new File(base_upload_path + a.getFilePath()),
-					new File(destpath));
+			FileUtils.copyFile(new File(base_upload_path + a.getFilePath()), new File(destpath));
 		}
 	}
 
@@ -591,42 +493,33 @@ public class AttachmentUtils {
 	 *            附件对象
 	 * @throws IOException
 	 */
-	public static void delete_backup(String base_upload_path, Attachment a)
-			throws IOException {
-		if ("true".equals(CommConstant.PROPERTY_MAP
-				.get("attachment.delete.backup"))) {
+	public static void delete_backup(String base_upload_path, Attachment a) throws IOException {
+		if ("true".equals(CommConstant.PROPERTY_MAP.get("attachment.delete.backup"))) {
 
 			if (StringUtils.isBlank(base_upload_path)) {
 				if (CommUtils.isWindowsOs()) {
-					base_upload_path = CommConstant.PROPERTY_MAP
-							.get("upload.file.path");
+					base_upload_path = CommConstant.PROPERTY_MAP.get("upload.file.path");
 				} else {
-					base_upload_path = CommConstant.PROPERTY_MAP
-							.get("upload.file.path.linux");
+					base_upload_path = CommConstant.PROPERTY_MAP.get("upload.file.path.linux");
 				}
 
-				base_upload_path = StringUtils.startsWith(base_upload_path,
-						"DIR:") ? StringUtils.removeStart(base_upload_path,
-						"DIR:") : base_upload_path;
+				base_upload_path = StringUtils.startsWith(base_upload_path, "DIR:") ? StringUtils.removeStart(
+						base_upload_path, "DIR:") : base_upload_path;
 			}
 
 			String destpath = "";
 
 			if (CommUtils.isWindowsOs()) {
-				destpath = CommConstant.PROPERTY_MAP
-						.get("attachment.delete.backup.windows");
+				destpath = CommConstant.PROPERTY_MAP.get("attachment.delete.backup.windows");
 			} else {
-				destpath = CommConstant.PROPERTY_MAP
-						.get("attachment.delete.backup.linux");
+				destpath = CommConstant.PROPERTY_MAP.get("attachment.delete.backup.linux");
 			}
 
-			destpath = StringUtils.startsWith(destpath, "DIR:") ? StringUtils
-					.removeStart(destpath, "DIR:") : destpath;
+			destpath = StringUtils.startsWith(destpath, "DIR:") ? StringUtils.removeStart(destpath, "DIR:") : destpath;
 
 			destpath = destpath + a.getFilePath();
 
-			FileUtils.copyFile(new File(base_upload_path + a.getFilePath()),
-					new File(destpath));
+			FileUtils.copyFile(new File(base_upload_path + a.getFilePath()), new File(destpath));
 		}
 	}
 

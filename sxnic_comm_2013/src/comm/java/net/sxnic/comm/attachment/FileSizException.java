@@ -7,5 +7,13 @@ package net.sxnic.comm.attachment;
  */
 @SuppressWarnings("serial")
 public class FileSizException extends Exception {
+	
+	public FileSizException(){
+		super();
+	}
+	
+	public FileSizException(String str){
+		super(str);
+	}
 
 }

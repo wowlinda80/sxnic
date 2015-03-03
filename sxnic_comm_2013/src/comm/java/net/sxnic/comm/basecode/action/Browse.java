@@ -15,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 @SuppressWarnings({"unchecked","serial"})
 public class Browse extends BaseCodeAction {
 
-
 	private Page basecodes;
 
 	private Map sortMap;
@@ -27,16 +26,12 @@ public class Browse extends BaseCodeAction {
 			int pageSize = PropertyUtil.findTableSize("firstbrowse.tabsize");
 		
 			if (!StringUtils.isBlank(sortCode) && !"00".equals(sortCode)) {
-				basecodes = basecodeManager.getPageBySortCode(pageNumber, pageSize,
-						sortCode);
-				 
+				basecodes = basecodeManager.getPageBySortCode(1, 100,
+						sortCode);				 
 			} else {
-				SortCriteria sortCriteria = WebUtils.getSingleSortCriteria(request);
-		
+				SortCriteria sortCriteria = WebUtils.getSingleSortCriteria(request);		
 				basecodes = basecodeManager.getBasecodes(pageNumber, pageSize,
 						sortCriteria.getPropertyName(), sortCriteria.isAscending());
-				
-				 
 			}
 		
 			sortMap = treatSortListToMap(basecodeManager.getSortCodes());

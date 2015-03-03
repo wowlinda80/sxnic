@@ -23,8 +23,8 @@
 
 		<field-validator type="stringlength">
 			<param name="minLength">1</param>
-			<param name="maxLength">60</param>
-			<message>类别编码的长度应该在2-60个字符</message>
+			<param name="maxLength">100</param>
+			<message>类别编码的长度应该在1-60个字符</message>
 		</field-validator>
 	</field>
 	
@@ -34,9 +34,9 @@
 		</field-validator>
 
 		<field-validator type="stringlength">
-			<param name="minLength">2</param>
+			<param name="minLength">1</param>
 			<param name="maxLength">10</param>
-			<message>类别编码的长度应该在2-10个字符</message>
+			<message>类别编码的长度应该在1-10个字符</message>
 		</field-validator>
 	</field>
 	
@@ -47,8 +47,8 @@
 
 		<field-validator type="stringlength">
 			<param name="minLength">1</param>
-			<param name="maxLength">60</param>
-			<message>类别编码的长度应该在2-10个字符</message>
+			<param name="maxLength">100</param>
+			<message>类别编码的长度应该在2-100个字符</message>
 		</field-validator>
 	</field>
 	

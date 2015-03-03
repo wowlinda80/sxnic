@@ -19,19 +19,19 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * 
- * <p>基础ActionSupport实现，所有业务Action都应该继承此类.
+ * <p>
+ * 基础ActionSupport实现，所有业务Action都应该继承此类.
+ * 
  * @author 孙宇飞
  * @version v1.0.0
  * @creationDate 2012-7-23
  * @moidfyRecords 修改记录
  */
-public class CommActionSupport extends ActionSupport implements
-		ServletRequestAware, ServletResponseAware {
+public class CommActionSupport extends ActionSupport implements ServletRequestAware, ServletResponseAware {
 
 	private static final long serialVersionUID = 1537063104410719867L;
 
-	private static Logger logger = LoggerFactory
-			.getLogger(CommActionSupport.class);
+	private static Logger logger = LoggerFactory.getLogger(CommActionSupport.class);
 
 	/**
 	 * 转入无授权页面
@@ -44,7 +44,7 @@ public class CommActionSupport extends ActionSupport implements
 	protected HttpServletRequest request;
 
 	protected HttpServletResponse response;
-	
+
 	/**
 	 * 浏览页面的查询短语
 	 */
@@ -83,16 +83,15 @@ public class CommActionSupport extends ActionSupport implements
 	 */
 	protected Object oldObj;
 
-	/**
-	 * 页码
-	 */
-	protected String page;
+	protected int page;
+
+	protected int pageSize;
 
 	/**
 	 * 菜单编码
 	 */
 	protected String menuCode;
-	
+
 	/**
 	 * 当前位置，与menuCode一起使用
 	 */
@@ -101,7 +100,8 @@ public class CommActionSupport extends ActionSupport implements
 	/**
 	 * 用于在action之间传递提示信息。此方法主要用于Intercepter 的方法调用
 	 * 
-	 * @param msg 信息内容的编码，具体定义在属性文件中，比如application.properties文件。
+	 * @param msg
+	 *            信息内容的编码，具体定义在属性文件中，比如application.properties文件。
 	 */
 	public void addMsg(String msg) {
 
@@ -129,8 +129,7 @@ public class CommActionSupport extends ActionSupport implements
 
 		Log log = new Log();
 		log.setOperation(Log.LOG_OPERATION_UPDATE);
-		log.setOperator((String)request.getSession().getAttribute(
-				CommConstant.APPCONTEXT_USERNAME));
+		log.setOperator((String) request.getSession().getAttribute(CommConstant.APPCONTEXT_USERNAME));
 		log.setIpAddress(CommUtils.findIP(request));
 		log.setDetails(details);
 
@@ -158,8 +157,7 @@ public class CommActionSupport extends ActionSupport implements
 		}
 
 		log.setIpAddress(CommUtils.findIP(request));
-		log.setOperator((String)request.getSession().getAttribute(
-				CommConstant.APPCONTEXT_USERNAME));
+		log.setOperator((String) request.getSession().getAttribute(CommConstant.APPCONTEXT_USERNAME));
 		log.setDetails(details);
 
 		logManager.save(log);
@@ -180,28 +178,25 @@ public class CommActionSupport extends ActionSupport implements
 	 *            修改后的实体类
 	 * @throws Exception
 	 */
-	protected void addLog(String operation, String className, Object oldObj,
-			Object newObj) throws Exception {
+	protected void addLog(String operation, String className, Object oldObj, Object newObj) throws Exception {
 		Log log = new Log();
 
 		if (StringUtils.isBlank(operation)) {
 			log.setOperation(Log.LOG_OPERATION_UPDATE);
 		}
 
-		log.setOperator((String)request.getSession().getAttribute(
-				CommConstant.APPCONTEXT_USERNAME));
+		log.setOperator((String) request.getSession().getAttribute(CommConstant.APPCONTEXT_USERNAME));
 		log.setIpAddress(CommUtils.findIP(request));
 		log.setClassName(className);
 		log.setOldObj(LogUtils.treatObjecttoBytes(oldObj));
 		log.setNewObj(LogUtils.treatObjecttoBytes(newObj));
-		log.setDetails(" modify " + className + " from " + oldObj + " to "
-				+ newObj);
+		log.setDetails(" modify " + className + " from " + oldObj + " to " + newObj);
 
 		logManager.save(log);
 
 		logger.debug("=====add===log===" + log.getDetails());
 	}
-	
+
 	/**
 	 * 添加重要日志，一般不转储
 	 * 
@@ -215,24 +210,21 @@ public class CommActionSupport extends ActionSupport implements
 	 *            修改后的实体类
 	 * @throws Exception
 	 */
-	protected void addImportantLog(String operation, String className, Object oldObj,
-			Object newObj) throws Exception {
+	protected void addImportantLog(String operation, String className, Object oldObj, Object newObj) throws Exception {
 		Log log = new Log();
-		//设置为重要
+		// 设置为重要
 		log.setCate(Log.LOG_IMPORTANT_CATE_002);
-		
+
 		if (StringUtils.isBlank(operation)) {
 			log.setOperation(Log.LOG_OPERATION_UPDATE);
 		}
 
-		log.setOperator((String)request.getSession().getAttribute(
-				CommConstant.APPCONTEXT_USERNAME));
+		log.setOperator((String) request.getSession().getAttribute(CommConstant.APPCONTEXT_USERNAME));
 		log.setIpAddress(CommUtils.findIP(request));
 		log.setClassName(className);
 		log.setOldObj(LogUtils.treatObjecttoBytes(oldObj));
 		log.setNewObj(LogUtils.treatObjecttoBytes(newObj));
-		log.setDetails(" modify " + className + " from " + oldObj + " to "
-				+ newObj);
+		log.setDetails(" modify " + className + " from " + oldObj + " to " + newObj);
 
 		logManager.save(log);
 
@@ -287,14 +279,6 @@ public class CommActionSupport extends ActionSupport implements
 		this.currentUrl = currentUrl;
 	}
 
-	public String getPage() {
-		return page;
-	}
-
-	public void setPage(String page) {
-		this.page = page;
-	}
-
 	public String getMenuCode() {
 		return menuCode;
 	}
@@ -319,5 +303,16 @@ public class CommActionSupport extends ActionSupport implements
 		this.txtQuery = txtQuery;
 	}
 
-	
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
 }

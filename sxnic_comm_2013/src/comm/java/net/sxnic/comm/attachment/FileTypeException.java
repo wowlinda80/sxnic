@@ -6,5 +6,13 @@ package net.sxnic.comm.attachment;
  */
 @SuppressWarnings("serial")
 public class FileTypeException extends Exception {
+	
+	public FileTypeException(){
+		super();
+	}
+	
+	public FileTypeException(String str){
+		super(str);
+	}
 
 }

@@ -3,7 +3,7 @@
 
     <!-- Name and Version -->
     <property name="name" value="sxnic-core-s3h4" />
-    <property name="version" value="2.0.0" />
+    <property name="version" value="2.1.0" />
 
     <!-- Directories for sources -->
     <property name="src.dir" value="${basedir}/src/core" />
@@ -75,7 +75,7 @@
 
     <path id="project.classpath">
         <fileset dir="${lib.dir}" includes="**/*.jar" /> 
-    	<fileset dir="F:/java/apache-tomcat-7.0.23/lib" includes="**/*.jar" />    
+    	<fileset dir="F:/java/apache-tomcat-7.0.42/lib" includes="**/*.jar" />    
     </path>
 
     <patternset id="src.files">
