@@ -31,7 +31,7 @@ public class ImportBaseCode extends
 System.out.println("filePath=="+filePath);
 		File dataFile = new File(filePath);
 
-		BaseCodeImportUtils.importBaseCode(baseCodeManager, dataFile);
+		BaseCodeImportUtils.importBaseCode(baseCodeManager,"", dataFile);
 
 	}
 }
