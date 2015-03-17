@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
  * 用来直接生成Html的radio Html代码
  * 
  * @author 孙宇飞 create date : 2011-4-18
+ * @upate 孙宇飞 加入年的参数
  */
 public class BaseCodeRadioTag extends BodyTagSupport {
 
@@ -22,6 +23,7 @@ public class BaseCodeRadioTag extends BodyTagSupport {
 
 	// 类别编码
 	private String sortCode;
+	private String year;
 	// 在jsp面上显示的名字
 	private String name;
 	// 预设值 用于回显
@@ -34,8 +36,19 @@ public class BaseCodeRadioTag extends BodyTagSupport {
 
 	public int doEndTag() {
 		JspWriter out = pageContext.getOut();
-		Map<String, String> map = CommConstant.BASECODE_MAP.get(sortCode);
+		Map<String, String> map;
 		try {
+			
+			if (CommConstant.BASECODE_YEAR_MAP.containsKey(sortCode)) {
+				if (CommConstant.BASECODE_YEAR_MAP.get(sortCode).containsKey(year)) {
+					map = CommConstant.BASECODE_YEAR_MAP.get(sortCode).get(year);
+				} else {
+					map = CommConstant.BASECODE_YEAR_MAP.get(sortCode).get("Y");
+				}
+			} else {
+				out.print("error sortCode");
+				return EVAL_PAGE;
+			}
 
 			if (map == null || map.size() <= 0) {
 				out.print("null map");
@@ -93,4 +106,11 @@ public class BaseCodeRadioTag extends BodyTagSupport {
 		this.value = value;
 	}
 
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
 }

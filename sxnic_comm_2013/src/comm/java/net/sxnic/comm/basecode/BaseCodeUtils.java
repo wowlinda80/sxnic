@@ -1,184 +1,91 @@
 package net.sxnic.comm.basecode;
 
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Map;
 
 import net.sxnic.comm.CommConstant;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * BaseCode工具类
+ * 
  * @author 孙宇飞
- *
+ * @update 孙宇飞 20150317 去掉了生成select的方法，其他方法都加入了年的参数
  */
-@SuppressWarnings("unchecked")
 public class BaseCodeUtils {
-
-	private static Log log = LogFactory.getLog(BaseCodeUtils.class);
 
 	/**
 	 * get infoCode from basecode Map
 	 * 
-	 * @param sortCode
-	 * @param infoCode
+	 * @param sortCode 不能为空
+	 * @param cyear 不能为空
+	 * @param infoCode 不能为空
 	 * @return
 	 */
-	public static String getInfoName(String sortCode, String infoCode) {
+	public static String getInfoName(String sortCode, String cyear, String infoCode) {
+		if (CommConstant.BASECODE_YEAR_MAP.containsKey(sortCode)) {
 
-		Map<String, Map<String, String>> map = CommConstant.BASECODE_MAP;
-		if (sortCode == null || "".equals(sortCode)) {
-			return "error sortCode";
-		}
-
-		if (infoCode == null || "".equals(infoCode)) {
-			return "";
-		}
-
-		if (map == null) {
-			return "error map";
-		}
-
-		try {
-			Map<String, String> bmap = (Map<String, String>) map.get(sortCode);
-
-			if (bmap == null) {
-				log.warn("sortCode error! the map relevanted to " + sortCode
-						+ " is null");
-				return "errorSortCode";
+			// 如果年为空 则直接取默认年
+			if (StringUtils.isBlank(cyear)) {
+				return CommConstant.BASECODE_YEAR_MAP.get(sortCode).get("Y").get(infoCode);
 			}
 
-			String infoName = bmap.get(infoCode);
-			if (StringUtils.isBlank(infoName)) {
-				log.warn("infoCode error! the infoName relevanted to "
-						+ infoCode + " has not found");
-				return "errorInfoName";
-			}
-
-			return infoName;
-		} catch (RuntimeException e) {
-			return "errorInfoName";
-		}
-	}
-
-	/**
-	 * 创建 下拉框的Html代码
-	 * 
-	 * @param sortCode
-	 *            类别编码
-	 * @param css
-	 *            对应css样式
-	 * @param onChange
-	 *            事件
-	 * @return
-	 */
-	public static String createSelectHtml(String name, String sortCode,
-			String css, String onChange, String value, String headerKey,
-			String headerValue, String childId, String childDataPath,
-			String autoWidth) {
-
-		Map map = CommConstant.BASECODE_MAP;
-		if (map == null) {
-			return "error map";
-		}
-
-		if (name == null || "".equals(name)) {
-			return "error name";
-		}
-
-		if (sortCode == null || "".equals(sortCode)) {
-			return "error sortCode";
-		}
-
-		css = "default";
-
-		Map<String, String> bmap = (Map<String, String>) map.get(sortCode);
-		StringBuffer sb = new StringBuffer();
-
-		if (bmap == null) {
-			log.warn("sortCode error! the map relevanted to " + sortCode
-					+ " is null");
-			return "error sortcode";
-		}
-
-		sb.append("<select id='" + name + "_id' name='" + name + "'");
-
-		if (StringUtils.isNotBlank(onChange)) {
-			sb.append(" onchange=\"" + onChange + "\" ");
-		}
-
-		if (StringUtils.isNotBlank(css)) {
-			sb.append(" class='" + css + "' ");
-		}
-
-		if (StringUtils.isNotBlank(childId)) {
-			sb.append(" childId='" + childId + "' ");
-		}
-
-		if (StringUtils.isNotBlank(childDataPath)) {
-			sb.append(" childDataPath='" + childDataPath + "' ");
-		}
-
-		if (StringUtils.isNotBlank(autoWidth)) {
-			sb.append(" autoWidth='" + autoWidth + "' ");
-		}
-
-		sb.append(" >");
-
-		if (StringUtils.isNotBlank(headerKey)
-				|| StringUtils.isNotBlank(headerValue)) {
-			sb.append("  <option value='" + headerKey
-					+ "' selected='selected'>" + headerValue + "</option>");
-		}
-
-		Iterator iter = bmap.keySet().iterator();
-		while (iter.hasNext()) {
-			String infoCode = (String) iter.next();
-			if (StringUtils.isNotBlank(value) && infoCode.equals(value)) {
-				sb.append("<option value='" + infoCode + "'  selected >"
-						+ bmap.get(infoCode) + "</option>");
+			if (CommConstant.BASECODE_YEAR_MAP.get(sortCode).containsKey(cyear)) {
+				return CommConstant.BASECODE_YEAR_MAP.get(sortCode).get(cyear).get(infoCode);
+			} else if (CommConstant.BASECODE_YEAR_MAP.get(sortCode).containsKey("Y")) {
+				return CommConstant.BASECODE_YEAR_MAP.get(sortCode).get("Y").get(infoCode);
 			} else {
-				sb.append("<option value='" + infoCode + "'>"
-						+ bmap.get(infoCode) + "</option>");
+				return "error year";
 			}
+		} else {
+			return "error sortCode";
 		}
-
-		sb.append("</select>");
-
-		return sb.toString();
-
 	}
 
 	/**
 	 * 根据sortCode和infoName 查询infoCode
 	 * 
-	 * @param sortCode
-	 *            类别编码
-	 * @param infoName
+	 * @param sortCode 不能为空
+	 * @param cyear 不能为空          
+	 * @param infoName 不能为空
 	 * @return
 	 */
-	public static String getInfoCode(String sortCode, String infoName) {
+	public static String getInfoCode(String sortCode, String cyear, String infoName) {
+		
+		Map<String,String> map = new HashMap<String, String>();
+		
+		if (CommConstant.BASECODE_YEAR_MAP.containsKey(sortCode)) {
 
-		if (StringUtils.isBlank(sortCode) || StringUtils.isBlank(infoName)) {
-			return "";
-		}
-
-		Map<String, String> map = CommConstant.BASECODE_MAP.get(sortCode);
-
-		Iterator iter = map.keySet().iterator();
-
-		while (iter.hasNext()) {
-
-			String key = (String) iter.next();
-
-			if (infoName.equals(map.get(key))) {
-				return key;
+			// 如果年为空 则直接取默认年
+			if (StringUtils.isBlank(cyear)) {
+				map=  CommConstant.BASECODE_YEAR_MAP.get(sortCode).get("Y");
 			}
-		}
 
-		return "";
+			if (CommConstant.BASECODE_YEAR_MAP.get(sortCode).containsKey(cyear)) {
+				map = CommConstant.BASECODE_YEAR_MAP.get(sortCode).get(cyear);
+			} else if (CommConstant.BASECODE_YEAR_MAP.get(sortCode).containsKey("Y")) {
+				map= CommConstant.BASECODE_YEAR_MAP.get(sortCode).get("Y");
+			} else {
+				return "error year";
+			}
+			
+			if(map!=null && map.size()>0){
+				for(String key:map.keySet()){
+					if(infoName.endsWith(map.get(key))){
+						return key;
+					}
+				}
+				
+				return "has not code";
+			}else{
+				return "error year";
+			}
+			
+		} else {
+			return "error sortCode";
+		}
+		
 	}
 
 }

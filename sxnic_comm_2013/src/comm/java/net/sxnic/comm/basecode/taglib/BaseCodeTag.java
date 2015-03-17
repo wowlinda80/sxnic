@@ -12,14 +12,16 @@ import net.sxnic.comm.basecode.BaseCodeUtils;
 
 /**
  * 基本码表的标签类，在jsp页面中用sortCde 和infoCode做参数 直接显示infoName
- * @author 孙宇飞
- * create date : 2009-3-15
+ * 
+ * @author 孙宇飞 create date : 2009-3-15
+ * @update 孙宇飞 20150317 加入年的参数
  */
 public class BaseCodeTag extends BodyTagSupport {
 
 	private static final long serialVersionUID = 2576305984125166739L;
 
 	private String sortCode;
+	private String cyear;
 	private String infoCode;
 
 	public int doStartTag() throws JspException {
@@ -30,15 +32,15 @@ public class BaseCodeTag extends BodyTagSupport {
 	public int doEndTag() {
 		JspWriter out = pageContext.getOut();
 		try {
-			if(!StringUtils.contains(infoCode, ",")){
-			out.print(BaseCodeUtils.getInfoName(sortCode, infoCode));
-			}else{
+			if (!StringUtils.contains(infoCode, ",")) {
+				out.print(BaseCodeUtils.getInfoName(sortCode, cyear, infoCode));
+			} else {
 				String[] infoCodes = StringUtils.split(infoCode, ",");
-				String temp ="";
-				for(String ic:infoCodes){
-					temp = temp+  BaseCodeUtils.getInfoName(sortCode, ic.trim())+",";
+				String temp = "";
+				for (String ic : infoCodes) {
+					temp = temp + BaseCodeUtils.getInfoName(sortCode, cyear, ic.trim()) + ",";
 				}
-				
+
 				out.print(StringUtils.removeEnd(temp, ","));
 			}
 
@@ -63,5 +65,13 @@ public class BaseCodeTag extends BodyTagSupport {
 
 	public void setInfoCode(String infoCode) {
 		this.infoCode = infoCode;
+	}
+
+	public String getCyear() {
+		return cyear;
+	}
+
+	public void setCyear(String cyear) {
+		this.cyear = cyear;
 	}
 }

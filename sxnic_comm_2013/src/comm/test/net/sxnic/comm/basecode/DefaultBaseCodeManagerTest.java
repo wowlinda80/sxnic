@@ -147,7 +147,7 @@ public class DefaultBaseCodeManagerTest extends AbstractTransactionalJUnit4Sprin
 		Assert.assertNotNull(bcManager.getBaseCode("009", "002", "2016"));
 
 	}
-	
+
 	@Test
 	public void testRebuildByYear() {
 		clear();
@@ -160,11 +160,11 @@ public class DefaultBaseCodeManagerTest extends AbstractTransactionalJUnit4Sprin
 		bcManager.save(b1);
 		bcManager.save(b2);
 	}
-	
+
 	@Test
 	public void testFuncGetBaseCode() {
 		clear();
-		
+
 		BaseCode b1 = new BaseCode("001", "是否", "001", "是");
 		BaseCode b2 = new BaseCode("001", "是否", "002", "否");
 
@@ -207,14 +207,43 @@ public class DefaultBaseCodeManagerTest extends AbstractTransactionalJUnit4Sprin
 		System.out.println("===basecode==year==json==" + json);
 
 		// 从json再转为Map
-		Map<String, Map<String,Map<String, String>>> BASECODE_YEAR_MAP = new HashMap<String, Map<String,Map<String, String>>>();
+		Map<String, Map<String, Map<String, String>>> BASECODE_YEAR_MAP = new HashMap<String, Map<String, Map<String, String>>>();
 		BASECODE_YEAR_MAP = gson.fromJson(json, Map.class);
-		
+
 		Assert.assertEquals(3, BASECODE_YEAR_MAP.size());
 		Assert.assertEquals(2, BASECODE_YEAR_MAP.get("008").size());
 		Assert.assertEquals("否", BASECODE_YEAR_MAP.get("001").get("Y").get("002"));
-		
+
 	}
-	
+
+	@Test
+	public void testBaseCodeUtils() {
+		clear();
+
+		BaseCode b1 = new BaseCode("001", "是否", "001", "是");
+		BaseCode b2 = new BaseCode("001", "是否", "002", "否");
+
+		bcManager.save(b1);
+		bcManager.save(b2);
+
+		b1 = new BaseCode("008", "类别", "001", "工业攻关");
+		b1.setCyear("2015");
+		b2 = new BaseCode("008", "类别", "002", "社会科学");
+		b2.setCyear("2015");
+
+		bcManager.save(b1);
+		bcManager.save(b2);
+		
+		// 从数据库中读为Map
+		bcManager.init();
+		
+		Assert.assertEquals("否", BaseCodeUtils.getInfoName("001", "2015", "002"));
+		Assert.assertEquals("工业攻关", BaseCodeUtils.getInfoName("008", "2015", "001"));
+		Assert.assertEquals("社会科学", BaseCodeUtils.getInfoName("008", "2015", "002"));
+		
+		Assert.assertEquals("002", BaseCodeUtils.getInfoCode("001", "2015", "否"));
+		Assert.assertEquals("001", BaseCodeUtils.getInfoCode("008", "2015", "工业攻关"));
+		Assert.assertEquals("002", BaseCodeUtils.getInfoCode("008", "2015", "社会科学"));
+	}
 
 }
