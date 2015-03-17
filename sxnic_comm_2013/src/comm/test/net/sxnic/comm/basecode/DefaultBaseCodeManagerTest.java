@@ -1,12 +1,9 @@
 package net.sxnic.comm.basecode;
 
-import java.util.List;
+import java.util.Map;
 
-import junit.framework.Assert;
-import net.sxinfo.core.dao.Page;
-import net.sxnic.comm.CommConstant;
-import net.sxnic.comm.utils.CommUtils;
-
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,151 +16,144 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
  */
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 @ContextConfiguration(locations = { "classpath:/applicationContext_test.xml" })
-public class DefaultBaseCodeManagerTest extends
-		AbstractTransactionalJUnit4SpringContextTests {
+public class DefaultBaseCodeManagerTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	@Autowired
-	BaseCodeManager basecodeManager;
+	BaseCodeManager bcManager;
 
-	@Test
-	public void testCreate() {
-
-		BaseCode bc = new BaseCode("10000", "性别", "01", "男");
-		BaseCode bc2 = new BaseCode("10000", "性别", "02", "女");
-
-		basecodeManager.save(bc);
-		basecodeManager.save(bc2);
-
-		List<BaseCode> list = basecodeManager
-				.getListBySortCodeOrderByInfoCode("10000");
-
-		Assert.assertEquals(2, list.size());
-
+	@Before
+	public void clear() {
+		bcManager.clear();
 	}
 
 	@Test
-	public void testInit() {
+	public void testCRUD() {
+		clear();
 
-		BaseCode bc = new BaseCode("10000", "性别", "01", "男");
-		BaseCode bc2 = new BaseCode("10000", "性别", "02", "女");
+		BaseCode b1 = new BaseCode("007", "年份", "2015", "2015");
+		BaseCode b2 = new BaseCode("007", "年份", "2016", "2016");
 
-		basecodeManager.save(bc);
-		basecodeManager.save(bc2);
+		bcManager.save(b1);
+		bcManager.save(b2);
 
-		CommConstant.BASECODE_MAP = basecodeManager.init();
-
-		Assert.assertEquals("男", BaseCodeUtils.getInfoName("10000", "01"));
+		Assert.assertEquals(2, bcManager.getAll().size());
 	}
 
 	@Test
-	public void testGetPage() {
-		BaseCode bc = new BaseCode("10000", "性别", "01", "男");
-		BaseCode bc2 = new BaseCode("10000", "性别", "02", "女");
+	public void testDeleteSortBySortCode() {
+		clear();
 
-		basecodeManager.save(bc);
-		basecodeManager.save(bc2);
+		BaseCode b1 = new BaseCode("007", "年份", "2015", "2015");
+		BaseCode b2 = new BaseCode("007", "年份", "2016", "2016");
 
-		Page page = basecodeManager.getBasecodes(1, 2, null, true);
+		bcManager.save(b1);
+		bcManager.save(b2);
 
-		Assert.assertEquals(2, page.getResults().size());
+		bcManager.deleteSortBySortCode("007");
 
+		Assert.assertEquals(0, bcManager.getAll().size());
 	}
 
 	@Test
-	public void testGetPageBySortCode() {
-		BaseCode bc = new BaseCode("10000", "性别", "01", "男");
-		BaseCode bc2 = new BaseCode("10000", "性别", "02", "女");
+	public void testUpdateSortCode() {
+		clear();
 
-		basecodeManager.save(bc);
-		basecodeManager.save(bc2);
+		BaseCode b1 = new BaseCode("007", "年份", "2015", "2015");
+		BaseCode b2 = new BaseCode("007", "年份", "2016", "2016");
 
-		Page page = basecodeManager.getPageBySortCode(1, 2, "10000");
+		bcManager.save(b1);
+		bcManager.save(b2);
 
-		Assert.assertEquals(2, page.getResults().size());
+		bcManager.updateSortCode("008", "007");
+
+		Assert.assertEquals(0, bcManager.findBy("sortCode", "007").size());
+		Assert.assertEquals(2, bcManager.findBy("sortCode", "008").size());
 	}
 
 	@Test
-	public void testDeleteById() {
-		BaseCode bc = new BaseCode("10000", "性别", "01", "男");
-		BaseCode bc2 = new BaseCode("10000", "性别", "02", "女");
+	public void testGetSortCodes() {
+		clear();
 
-		basecodeManager.save(bc);
-		basecodeManager.save(bc2);
+		BaseCode b1 = new BaseCode("007", "年份", "2015", "2015");
+		BaseCode b2 = new BaseCode("008", "年份1", "2016", "2016");
 
-		basecodeManager.delete(bc);
-		basecodeManager.deleteById(bc2.getId());
+		bcManager.save(b1);
+		bcManager.save(b2);
 
-		List<BaseCode> list = basecodeManager
-				.getListBySortCodeOrderByInfoCode("10000");
+		Map<String, String> map = bcManager.getSortCodes();
 
-		Assert.assertEquals(0, list.size());
+		Assert.assertEquals(2, map.size());
+		Assert.assertEquals("年份1", map.get("008"));
+		Assert.assertTrue(map.containsKey("007"));
 	}
 
 	@Test
-	public void testDeleteSort() {
-		BaseCode bc = new BaseCode("10000", "性别", "01", "男");
-		BaseCode bc2 = new BaseCode("10000", "性别", "02", "女");
+	public void testGetBaseCodeBySortCodeInfoCodeYear() {
+		clear();
 
-		basecodeManager.save(bc);
-		basecodeManager.save(bc2);
+		BaseCode b1 = new BaseCode("008", "类别", "001", "工业攻关");
+		b1.setCyear("2015");
+		BaseCode b2 = new BaseCode("008", "类别", "002", "社会科学");
+		b2.setCyear("2015");
 
-		basecodeManager.deleteSortBySortCode("10000");
+		bcManager.save(b1);
+		bcManager.save(b2);
 
-		List<BaseCode> list = basecodeManager
-				.getListBySortCodeOrderByInfoCode("10000");
+		b1 = new BaseCode("008", "类别", "001", "工业攻关");
+		b1.setCyear("2016");
+		b2 = new BaseCode("008", "类别", "003", "专利推广");
+		b2.setCyear("2016");
 
-		Assert.assertEquals(0, list.size());
+		bcManager.save(b1);
+		bcManager.save(b2);
+
+		Assert.assertNotNull(bcManager.getBaseCode("008", "001", "2015"));
 	}
 
 	@Test
-	public void testGetBaseCode() {
-		BaseCode bc = new BaseCode("100000", "性别", "0111", "男");
-		basecodeManager.save(bc);
-		
-		BaseCode bc2 = basecodeManager.getBaseCode("100000", "性别", "0111", "男");
-		
-		Assert.assertEquals(bc, bc2);
+	public void testCopySortCode() {
+		clear();
 
-		BaseCode bc1 = basecodeManager.getBaseCode("100000", "性别", "0111", "男");
+		BaseCode b1 = new BaseCode("008", "类别", "001", "工业攻关");
+		b1.setCyear("2015");
+		BaseCode b2 = new BaseCode("008", "类别", "002", "社会科学");
+		b2.setCyear("2015");
 
-		Assert.assertNotNull(bc1);
+		bcManager.save(b1);
+		bcManager.save(b2);
+
+		// 有年份的copy
+		bcManager.copySortCode("008", "2016", "2015");
+
+		Assert.assertNotNull(bcManager.getBaseCode("008", "001", "2015"));
+		Assert.assertNotNull(bcManager.getBaseCode("008", "001", "2016"));
+		Assert.assertNotNull(bcManager.getBaseCode("008", "002", "2016"));
+
+		b1 = new BaseCode("009", "类别", "001", "工业攻关");
+		b2 = new BaseCode("009", "类别", "002", "社会科学");
+
+		bcManager.save(b1);
+		bcManager.save(b2);
+
+		// 无年份的copy
+		bcManager.copySortCode("009", "2016", "2015");
+
+		Assert.assertNotNull(bcManager.getBaseCode("009", "001", "2016"));
+		Assert.assertNotNull(bcManager.getBaseCode("009", "002", "2016"));
+
 	}
 	
 	@Test
-	public void testDeleteSortBySortCode(){
-		BaseCode bc = new BaseCode("2100000", "性别", "0111", "男");
-		basecodeManager.save(bc);
-		
-		basecodeManager.deleteSortBySortCode("2100000");
-		
-		BaseCode bc1 = basecodeManager.getBaseCode("2100000", "性别", "0111", "男");
-		Assert.assertNull(bc1);
-	}
-	
-	@Test
-	public void testInsertCurrYear(){
-		BaseCode bc = new BaseCode("007", "年份", "2013", "2013");
-		bc.setInfoIndex("100");
-		basecodeManager.save(bc);
-		
-		BaseCode bc2 = basecodeManager.getBaseCode("007", "2013");
-		
-		Assert.assertEquals("100", bc2.getInfoIndex());
-		//有数据插入，则排序号-1
-		basecodeManager.insertCurrYear("", "");
-		
-		BaseCode bc1 = basecodeManager.getBaseCode("007", CommUtils.getCurrYear());
-		
-		Assert.assertEquals("099", bc1.getInfoIndex());
-		
-		//无数据插入，排序号从100开始
-		basecodeManager.deleteSortBySortCode("007");
-		
-		basecodeManager.insertCurrYear("", "");
-		bc2 = basecodeManager.getBaseCode("007", CommUtils.getCurrYear());
-			
-		Assert.assertEquals("100", bc2.getInfoIndex());
-		
+	public void testRebuildByYear() {
+		clear();
+
+		BaseCode b1 = new BaseCode("008", "类别", "001", "工业攻关");
+		b1.setCyear("2015");
+		BaseCode b2 = new BaseCode("008", "类别", "002", "社会科学");
+		b2.setCyear("2015");
+
+		bcManager.save(b1);
+		bcManager.save(b2);
 	}
 
 }

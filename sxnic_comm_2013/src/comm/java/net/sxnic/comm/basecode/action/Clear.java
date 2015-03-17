@@ -11,7 +11,7 @@ public class Clear extends BaseCodeAction {
 
 	public String execute() throws Exception {
 
-		basecodeManager.clearTable();
+		basecodeManager.clear();
 
 		log.debug("Table date of basecode has been cleared!");
 

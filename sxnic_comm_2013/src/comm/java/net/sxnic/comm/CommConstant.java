@@ -17,6 +17,11 @@ public class CommConstant {
 	 * 组合排序的map
 	 */
 	public static final String SORTMAP_SESSION_KEY = "sortmap_key";
+	
+	/**
+	 * sortCode没有年的概念时，统一用Y作为Map的key
+	 */
+	public static final String SORT_YEAR = "Y";
 
 	public static String SYSTEM_CONTEXTPATH = "sxkh";
 
@@ -31,6 +36,12 @@ public class CommConstant {
 	 * 在系统启动时需要初始化的 基本信息码表MAP
 	 */
 	public static Map<String, Map<String, String>> BASECODE_MAP = new ConcurrentHashMap<String, Map<String, String>>();
+	
+	/**
+	 * 2015年正式引入年份概念，Map的key分别表示：类别、年、信息码
+	 */
+	public static Map<String, Map<String,Map<String, String>>> BASECODE_YEAR_MAP = new ConcurrentHashMap<String, Map<String,Map<String, String>>>();
+	
 	/**
 	 * 在系统启动时需要初始化的 属性表MAP
 	 */

@@ -19,7 +19,7 @@ public class Save extends BaseCodeAction implements Preparable {
 	private String id;
 
 	public void prepare() throws Exception {
-		basecode = basecodeManager.getById(id);
+		basecode = basecodeManager.get(id);
 
 	}
 
@@ -29,14 +29,13 @@ public class Save extends BaseCodeAction implements Preparable {
 			basecodeManager.update(basecode);
 
 			// 重建baseCodeMap
-			CommConstant.BASECODE_MAP = basecodeManager.init();
+			basecodeManager.init();
 
 			msg = "saveSuccess";
 
 			// log
 			logger.debug("保存basecode成功！id:" + basecode.getId());
-			addLog(Log.LOG_OPERATION_UPDATE, request.getSession().getAttribute(
-					CommConstant.APPCONTEXT_USERNAME)
+			addLog(Log.LOG_OPERATION_UPDATE, request.getSession().getAttribute(CommConstant.APPCONTEXT_USERNAME)
 					+ " update basecode success! id=" + id);
 
 		} catch (Exception e) {

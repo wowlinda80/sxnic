@@ -23,11 +23,11 @@ public class Create extends BaseCodeAction {
 			}else{
 				//批量导入
 				String[] bcs = StringUtils.split(txtMuti);
-				BaseCodeImportUtils.importBaseCode(basecodeManager, bcs);
+				BaseCodeImportUtils.importBaseCode(basecodeManager,cyear, bcs);
 			}			
 
 			// 重建baseCodeMap
-			CommConstant.BASECODE_MAP = basecodeManager.init();
+			basecodeManager.init();
 
 			msg = "createSuccess";
 

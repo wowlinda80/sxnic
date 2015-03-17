@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class BaseCodeAction extends CommActionSupport {
 
 	protected BaseCode basecode;
+	
+	protected String cyear;
 
 	@Autowired
 	protected BaseCodeManager basecodeManager;
@@ -38,6 +40,14 @@ public abstract class BaseCodeAction extends CommActionSupport {
 
 	public void setSortCode(String sortCode) {
 		this.sortCode = sortCode;
+	}
+
+	public String getCyear() {
+		return cyear;
+	}
+
+	public void setCyear(String cyear) {
+		this.cyear = cyear;
 	}
 	
 	

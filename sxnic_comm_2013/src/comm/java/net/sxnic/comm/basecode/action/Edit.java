@@ -8,7 +8,7 @@ public class Edit extends BaseCodeAction  {
 
     private String id;
     public String execute() throws Exception {
-        basecode = basecodeManager.getById(id);
+        basecode = basecodeManager.get(id);
         return SUCCESS;
     }
 

@@ -1,66 +1,57 @@
 package net.sxnic.comm.basecode.action;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.sxinfo.core.dao.Page;
-import net.sxinfo.core.dao.hibernate3.SortCriteria;
+import net.sxinfo.core.dao.hibernate3.HibernateCriteria;
+import net.sxinfo.core.dao.hibernate3.HibernateDaoUtils;
+import net.sxinfo.core.dao.hibernate3.HibernateOrder;
 import net.sxinfo.core.util.WebUtils;
 import net.sxnic.comm.utils.PropertyUtil;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 
-@SuppressWarnings({"unchecked","serial"})
+@SuppressWarnings("serial")
 public class Browse extends BaseCodeAction {
 
-	private Page basecodes;
+	private Page datas;
 
 	private Map sortMap;
 
 	public String execute() throws Exception {
-		
-		try {						
+
+		try {
 			int pageNumber = WebUtils.getPageNumber(request);
 			int pageSize = PropertyUtil.findTableSize("firstbrowse.tabsize");
-		
-			if (!StringUtils.isBlank(sortCode) && !"00".equals(sortCode)) {
-				basecodes = basecodeManager.getPageBySortCode(1, 100,
-						sortCode);				 
-			} else {
-				SortCriteria sortCriteria = WebUtils.getSingleSortCriteria(request);		
-				basecodes = basecodeManager.getBasecodes(pageNumber, pageSize,
-						sortCriteria.getPropertyName(), sortCriteria.isAscending());
+
+			HibernateOrder order = HibernateDaoUtils.createHibernateOrder("infoIndex", true);
+			HibernateCriteria hc = new HibernateCriteria().add(order);
+			order = HibernateDaoUtils.createHibernateOrder("infoCode", true);
+			hc.add(order);
+
+			Criterion dc = null;
+
+			if (StringUtils.isNotBlank(sortCode)) {
+				dc = Restrictions.eq("sortCode", sortCode);
+				hc.add(dc);
 			}
-		
-			sortMap = treatSortListToMap(basecodeManager.getSortCodes());
-			
+
+			if (StringUtils.isNotBlank(cyear)) {
+				dc = Restrictions.eq("cyear", cyear);
+				hc.add(dc);
+			}
+
+			datas = basecodeManager.getPageByCriteria(pageNumber, pageSize, hc);
+
+			sortMap = basecodeManager.getSortCodes();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		
-		
 		return SUCCESS;
-	}
-	
-	public Map treatSortListToMap(List list){
-		Iterator iter = list.iterator();
-		Map map = new LinkedHashMap();
-		while(iter.hasNext()){
-			Object[] strs = (Object[])iter.next();
-			map.put(strs[0], strs[1]);
-		}
-		return map;
-	}
-
-	public Page getBasecodes() {
-		return this.basecodes;
-	}
-
-	public void setBasecodes(Page basecodes) {
-		this.basecodes = basecodes;
 	}
 
 	public Map getSortMap() {
@@ -71,7 +62,12 @@ public class Browse extends BaseCodeAction {
 		this.sortMap = sortMap;
 	}
 
+	public Page getDatas() {
+		return datas;
+	}
 
+	public void setDatas(Page datas) {
+		this.datas = datas;
+	}
 
-	
 }

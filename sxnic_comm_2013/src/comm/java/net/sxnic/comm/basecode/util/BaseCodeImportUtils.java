@@ -1,8 +1,7 @@
 package net.sxnic.comm.basecode.util;
-
+ 
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.List;
 
 import net.sxnic.comm.CommConstant;
@@ -30,19 +29,19 @@ public class BaseCodeImportUtils {
 	 * @param file
 	 * @throws IOException
 	 */
-	public static void importBaseCode(BaseCodeManager basecodeManager, File file)
+	public static void importBaseCode(BaseCodeManager basecodeManager,String cyear, File file)
 			throws IOException {
 
 		List<String> lines = FileUtils.readLines(file, "utf-8");
 
 		log.debug("clear table data.............");
 
-		basecodeManager.clearTable();
+		basecodeManager.clear();
 
 		log.debug("init basecode start...........");
 
 		int size = lines.size();
-		importBaseCode(basecodeManager, (String[]) lines
+		importBaseCode(basecodeManager,cyear, (String[]) lines
 				.toArray(new String[size]));
 
 		log.debug("init basecode over............");
@@ -55,18 +54,18 @@ public class BaseCodeImportUtils {
 	 * @param data
 	 * @throws IOException
 	 */
-	public static void importBaseCode(BaseCodeManager basecodeManager,
+	public static void importBaseCode(BaseCodeManager basecodeManager,String cyear,
 			String data) throws IOException {
 
 		String[] lines = StringUtils.split(data, '\n');
 
 		log.debug("clear table data.............");
 
-		basecodeManager.clearTable();
+		basecodeManager.clear();
 
 		log.debug("init basecode start...........");
 
-		importBaseCode(basecodeManager, lines);
+		importBaseCode(basecodeManager,cyear, lines);
 
 		log.debug("init basecode over............");
 	}
@@ -77,7 +76,7 @@ public class BaseCodeImportUtils {
 	 * @param basecodeManager
 	 * @param lines
 	 */
-	public static void importBaseCode(BaseCodeManager basecodeManager,
+	public static void importBaseCode(BaseCodeManager basecodeManager,String cyear,
 			String[] lines) {
 
 		for (String line : lines) {
@@ -89,7 +88,7 @@ public class BaseCodeImportUtils {
 			String[] m = line.split(",");
 
 			log.debug(m[0] + "-----" + m[1]);
-			BaseCode bc = basecodeManager.getBaseCode(m[0].trim(), m[2].trim());
+			BaseCode bc = basecodeManager.getBaseCode(m[0].trim(), m[2].trim(),"");
 			if(bc ==null){
 				bc = new BaseCode();
 				bc.setSortCode(m[0].trim());
@@ -99,8 +98,7 @@ public class BaseCodeImportUtils {
 				if (m.length > 4) {
 					bc.setInfoIndex(m[4].trim());
 				}
-				bc.setCyear(String.valueOf(Calendar.getInstance()
-						.get(Calendar.YEAR)));
+				bc.setCyear(cyear);
 				
 				log.debug("===create basecode success==="+bc.getSortCode()+"==="+bc.getInfoCode());
 				
@@ -112,7 +110,8 @@ public class BaseCodeImportUtils {
 				if (m.length > 4) {
 					bc.setInfoIndex(m[4].trim());
 				}
-				log.debug("===update basecode success==="+bc.getSortCode()+"==="+bc.getInfoCode());
+				bc.setCyear(cyear);
+				log.debug("===update basecode success===" + bc.getSortCode() + "===" + bc.getInfoCode());
 			}			
 
 			basecodeManager.save(bc);
