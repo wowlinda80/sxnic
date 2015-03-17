@@ -52,11 +52,11 @@ public class HibernateBaseCodeDao extends HibernateDao<BaseCode, String>
 		Map<String, String> subMap = new LinkedHashMap<String, String>();
 		
 		//先判断sortCode有无年的概念
-		List<BaseCode> list = find("select distinct cyear from BaseCode where sortCode='"+sortCode+"' order by cyear");
+		List<BaseCode> list = find("select distinct cyear from BaseCode where cyear is not null and sortCode='"+sortCode+"' order by cyear");
 		if(list ==null || list.size()==0){
 			List<BaseCode> infoList = find("from BaseCode where sortCode=? order by infoIndex asc,infoCode asc", new Object[]{sortCode});
-			
-			if(infoList ==null || infoList.size()==0){
+
+			if(infoList !=null && infoList.size()>0){
 				subMap = new LinkedHashMap<String, String>();
 				for(BaseCode bc:infoList){
 					subMap.put(bc.getInfoCode(), bc.getInfoName());

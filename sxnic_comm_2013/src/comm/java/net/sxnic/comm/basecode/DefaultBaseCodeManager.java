@@ -127,7 +127,6 @@ public class DefaultBaseCodeManager extends DefaultManager<BaseCode, BaseCodeDao
 	public void init() {
 		CommConstant.BASECODE_YEAR_MAP = new HashMap<String, Map<String, Map<String, String>>>();
 		Map<String, String> sortCodeMap = getSortCodes();
-		Map<String, Map<String, String>> yearInfoMap;
 		for (String sortCode : sortCodeMap.keySet()) {
 			CommConstant.BASECODE_YEAR_MAP.put(sortCode, basecodeDao.getBySortCode(sortCode));
 		}
