@@ -36,10 +36,12 @@ public class Log extends AbstractEntity {
 	
 	public static final String LOG_IMPORTANT_CATE_002 = "002";
 	
+	public static final String LOG_IMPORTANT_CATE_003 = "003";
+	
 	/**
 	 * 操作人
 	 */
-	@Column(name="operator_")
+	@Column(name="operator_",length=50)
 	private String operator;
 	
 	/**
@@ -49,14 +51,15 @@ public class Log extends AbstractEntity {
 	private String operation;
 	
 	/**
-	 * 001一般 002重要，一般不做转移
+	 * 001一般  002重要  003Exception
 	 */
+	@Column(length=10)
 	private String cate;
 	
 	/**
 	 * 涉及到的类名,包括完整的包名. net.sxnic.ugr.user.User
 	 */
-	@Column(name="calssName_")
+	@Column(name="calssName_",length=100)
 	private String className;
 	
 	/**
@@ -76,7 +79,7 @@ public class Log extends AbstractEntity {
 	/**
 	 * 如果需要则记录Ip地址
 	 */
-	@Column(name="ipaddress_")
+	@Column(name="ipaddress_",length=30)
 	private String ipAddress;
 
 	/**
@@ -84,6 +87,13 @@ public class Log extends AbstractEntity {
 	 */
 	@Column(name="details_",length=1000)
 	private String details;
+	
+	/**
+	 * 存真实的网站名称
+	 * 孙宇飞 20150318 为了子系统而设计
+	 */
+	@Column(name="website_",length=50)
+	private String website;
 
 	public Log() {
 		super();
@@ -152,6 +162,14 @@ public class Log extends AbstractEntity {
 
 	public void setCate(String cate) {
 		this.cate = cate;
+	}
+
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
 	}
 
 }

@@ -116,6 +116,23 @@ public class CommActionSupport extends ActionSupport implements ServletRequestAw
 
 		this.msg = null;
 	}
+	
+	/**
+	 * 记录Exception，并发送至数据中心。在每个子系统设置一个ActionSupport并重写此方法
+	 * @param website
+	 * @param className
+	 * @param exception
+	 */
+	protected void logException(String website,String className,String exception) {
+		//数据中心自用，其他子系统将通过Webservice发送至数据中心
+		Log log = new Log();
+		log.setCate(Log.LOG_IMPORTANT_CATE_003);
+		log.setOperator(website);
+		log.setClassName(className);
+		log.setDetails(exception);
+
+		logManager.save(log);
+	}
 
 	/**
 	 * 添加系统日志

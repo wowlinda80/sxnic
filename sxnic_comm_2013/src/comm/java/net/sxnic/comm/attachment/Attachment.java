@@ -45,17 +45,19 @@ public class Attachment extends AbstractEntity {
 	/**
 	 * 原来的文件名 包括后缀名
 	 */
+	@Column(length=100)
 	private String oriName;
 	
 	/**
 	 * 完整的物理路径（包括文件名及后缀，不包括基础路径）
 	 */
+	@Column(length=100)
 	private String filePath;
 	
 	/**
 	 * 后缀
 	 */
-	@Column(name="suffix_")
+	@Column(name="suffix_",length=10)
 	private String suffix;
 
 	
@@ -74,10 +76,11 @@ public class Attachment extends AbstractEntity {
 	/**
 	 * 类型
 	 */
-	@Column(name="type_")
+	@Column(name="type_",length=20)
 	private String type;
 	
 	//关联实体ID
+	@Column(length=50)
 	private String entityId;
 
 	public Attachment() {
