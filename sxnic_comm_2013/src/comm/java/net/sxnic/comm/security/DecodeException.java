@@ -7,12 +7,16 @@ package net.sxnic.comm.security;
  * @Version 1.0
  * @CreateDate:2014年12月11日
  */
-public class DecodeException extends Exception{
+public class DecodeException extends RuntimeException{
 
 	private static final long serialVersionUID = 3549309469598987878L;
 	
 	public DecodeException(){
 		super();
+	}
+	
+	public DecodeException(String arg0){
+		super(arg0);
 	}
 
 }

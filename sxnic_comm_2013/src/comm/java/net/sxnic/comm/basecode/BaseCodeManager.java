@@ -58,6 +58,11 @@ public interface BaseCodeManager extends Manager<BaseCode, String> {
 	 * initialize BaseCode to map. be used in AppListener
 	 */
 	void init();
+	
+	/**
+	 * initialize BaseCode to map. be used in AppListener
+	 */
+	void initNoYear();
 
 	/**
 	 * 根据sortCode infoCode 查询

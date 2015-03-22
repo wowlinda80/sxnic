@@ -245,5 +245,27 @@ public class DefaultBaseCodeManagerTest extends AbstractTransactionalJUnit4Sprin
 		Assert.assertEquals("001", BaseCodeUtils.getInfoCode("008", "2015", "工业攻关"));
 		Assert.assertEquals("002", BaseCodeUtils.getInfoCode("008", "2015", "社会科学"));
 	}
+	
+	@Test
+	public void testInitNoYear(){
+		clear();
+
+		BaseCode b1 = new BaseCode("001", "是否", "001", "是");
+		BaseCode b2 = new BaseCode("001", "是否", "002", "否");
+
+		bcManager.save(b1);
+		bcManager.save(b2);
+		
+		b1 = new BaseCode("008", "类别", "001", "工业攻关");
+		b2 = new BaseCode("008", "类别", "002", "社会科学");
+
+		bcManager.save(b1);
+		bcManager.save(b2);
+		
+		bcManager.initNoYear();
+		
+		Assert.assertEquals(2, CommConstant.BASECODE_MAP.size());
+		Assert.assertEquals("是", CommConstant.BASECODE_MAP.get("001").get("001"));
+	}
 
 }

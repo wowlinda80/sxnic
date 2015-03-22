@@ -1,6 +1,7 @@
 package net.sxnic.comm.basecode;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -177,5 +178,19 @@ public class DefaultBaseCodeManager extends DefaultManager<BaseCode, BaseCodeDao
 			
 			basecodeDao.save(newBc);
 		}		
+	}
+
+	@Override
+	public void initNoYear() {
+		Map<String, String> sortCodeMap = getSortCodes();
+		Map<String,String> map;
+		for (String sortCode : sortCodeMap.keySet()) {
+			map = new LinkedHashMap<String,String>();
+			List<BaseCode> list = this.getListBySortCodeYear(sortCode, "");
+			for(BaseCode b:list){
+				map.put(b.getInfoCode(),b.getInfoName());
+			}
+			CommConstant.BASECODE_MAP.put(sortCode, map);
+		}
 	}
 }

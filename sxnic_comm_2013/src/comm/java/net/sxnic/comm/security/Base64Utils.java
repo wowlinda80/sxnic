@@ -32,6 +32,10 @@ public class Base64Utils {
 	 * @throws DecodeException
 	 */
 	public static String encode(String name, String key) throws DecodeException {
+		if (StringUtils.isBlank(name)) {
+			return "";
+		}
+
 		String temp = "";
 		try {
 			if (StringUtils.isBlank(key)) {
@@ -41,7 +45,6 @@ public class Base64Utils {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new DecodeException();
 		}
 
@@ -59,6 +62,9 @@ public class Base64Utils {
 	 * @throws DecodeException
 	 */
 	public static String dccode(String name, String key) throws DecodeException {
+		if (StringUtils.isBlank(name)) {
+			return "";
+		}
 		String temp = "";
 		try {
 			if (StringUtils.isBlank(key)) {
@@ -81,6 +87,9 @@ public class Base64Utils {
 	 * @throws DecodeException
 	 */
 	public static String encode(String name) throws DecodeException {
+		if (StringUtils.isBlank(name)) {
+			return "";
+		}
 		String temp = "";
 		try {
 			temp = new String(encode(ENCODE_KEY, name.getBytes(ENCODE_GBK)).toString());
@@ -99,6 +108,9 @@ public class Base64Utils {
 	 * @throws DecodeException
 	 */
 	public static String dccode(String name) throws DecodeException {
+		if (StringUtils.isBlank(name)) {
+			return "";
+		}
 		String temp = "";
 		try {
 			temp = new String(decode(ENCODE_KEY, Base64.decodeBase64(name.getBytes())), ENCODE_GBK);
