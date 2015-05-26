@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.URL;
@@ -50,7 +52,8 @@ public class CommUtils {
 	/**
 	 * 判断是否为整数
 	 * 
-	 * @param str  要判断的字符串
+	 * @param str
+	 *            要判断的字符串
 	 * @return 如果是整数则返回true，否则返回false
 	 */
 	public static boolean isInt(String str) {
@@ -71,8 +74,10 @@ public class CommUtils {
 	/**
 	 * 两个数值相加
 	 * 
-	 * @param v1 数值1
-	 * @param v2 数值2
+	 * @param v1
+	 *            数值1
+	 * @param v2
+	 *            数值2
 	 * @return 两个浮点型数值之和
 	 */
 	public static double add(double v1, double v2) {
@@ -110,8 +115,7 @@ public class CommUtils {
 	 * @param encoding
 	 *            编码
 	 */
-	public static void deleteandwrite(File file, StringBuffer sb,
-			String encoding) {
+	public static void deleteandwrite(File file, StringBuffer sb, String encoding) {
 		try {
 			if (file.isFile()) {
 				log.debug("delete file: " + file.getPath());
@@ -133,8 +137,7 @@ public class CommUtils {
 
 			URL url = new URL(strUrl);
 			System.out.println(url.openStream());
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					url.openStream()));
+			BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
 			String s = "";
 			StringBuffer sb = new StringBuffer("");
 			while ((s = br.readLine()) != null) {
@@ -157,8 +160,7 @@ public class CommUtils {
 	 */
 	public static String treatFieldSetterName(String fieldName) {
 		if ((fieldName == null) || ("".equals(fieldName))) {
-			throw new NullPointerException("fieldName:" + fieldName
-					+ " is null");
+			throw new NullPointerException("fieldName:" + fieldName + " is null");
 		}
 
 		// 如果头字母是大写，则原路返回
@@ -168,8 +170,7 @@ public class CommUtils {
 
 		String firestChart = fieldName.substring(0, 1);
 
-		return StringUtils.replaceOnce(fieldName, firestChart,
-				firestChart.toUpperCase());
+		return StringUtils.replaceOnce(fieldName, firestChart, firestChart.toUpperCase());
 	}
 
 	/**
@@ -250,8 +251,8 @@ public class CommUtils {
 	/**
 	 * 向set中添加string数组
 	 * 
-	 * @param set 
-	 * @param strs 
+	 * @param set
+	 * @param strs
 	 */
 	public static void SetAppendArray(Set<String> set, String[] strs) {
 		for (String str : strs) {
@@ -262,7 +263,7 @@ public class CommUtils {
 	/**
 	 * 把Set转化为Array
 	 * 
-	 * @param set 
+	 * @param set
 	 * @return 一个数组
 	 */
 	public static String[] SettoArray(Set<String> set) {
@@ -307,8 +308,8 @@ public class CommUtils {
 	 * @return 路径
 	 */
 	public static String findWebRealPath(HttpServletRequest request) {
-		return StringUtils.substringBefore(request.getRequestURL().toString(),
-				request.getContextPath()) + request.getContextPath() + "/";
+		return StringUtils.substringBefore(request.getRequestURL().toString(), request.getContextPath())
+				+ request.getContextPath() + "/";
 	}
 
 	/**
@@ -521,7 +522,7 @@ public class CommUtils {
 		for (String s : temp1) {
 			temp2 = temp2 + StringUtils.trim(s) + splitChart;
 		}
-		System.out.println("---2----"+temp2);
+		System.out.println("---2----" + temp2);
 		return StringUtils.removeEnd(temp2, splitChart);
 	}
 
@@ -579,14 +580,14 @@ public class CommUtils {
 	 * @param format
 	 */
 	public static Date FormatStringToDate(String date, String format) {
-		if(StringUtils.isBlank(date)){
+		if (StringUtils.isBlank(date)) {
 			return null;
 		}
-		
-		if(StringUtils.isBlank(format)){
+
+		if (StringUtils.isBlank(format)) {
 			format = CommConstant.SHORT_NORMAL_DATEFORMAT;
 		}
-		
+
 		SimpleDateFormat df = new SimpleDateFormat(format);
 		try {
 			return df.parse(date);
@@ -602,14 +603,14 @@ public class CommUtils {
 	 * @param format
 	 */
 	public static String FormatDateToString(Date date, String format) {
-		if(date==null){
+		if (date == null) {
 			return "";
 		}
-		
-		if(StringUtils.isBlank(format)){
+
+		if (StringUtils.isBlank(format)) {
 			format = CommConstant.SHORT_NORMAL_DATEFORMAT;
 		}
-		
+
 		try {
 			SimpleDateFormat df = new SimpleDateFormat(format);
 			return df.format(date);
@@ -620,8 +621,8 @@ public class CommUtils {
 
 	public static String getDebugTime() {
 		Calendar c = Calendar.getInstance();
-		return c.get(Calendar.HOUR) + "-时-" + c.get(Calendar.MINUTE) + "-分-"
-				+ c.get(Calendar.SECOND) + "-秒-" + c.get(Calendar.MILLISECOND);
+		return c.get(Calendar.HOUR) + "-时-" + c.get(Calendar.MINUTE) + "-分-" + c.get(Calendar.SECOND) + "-秒-"
+				+ c.get(Calendar.MILLISECOND);
 	}
 
 	public static void printDebugTime() {
@@ -642,8 +643,7 @@ public class CommUtils {
 	 * @return 间隔天数
 	 */
 	public static int calTwoDate(Date bigDate, Date smallDate) {
-		long l = (bigDate.getTime() - smallDate.getTime())
-				/ (1000 * 60 * 60 * 24);
+		long l = (bigDate.getTime() - smallDate.getTime()) / (1000 * 60 * 60 * 24);
 		return (int) Math.rint(l);
 	}
 
@@ -765,72 +765,117 @@ public class CommUtils {
 		}
 		return isGB2312;
 	}
-	
+
 	/**
 	 * 获取文件的后缀名
-	 * @param fileName 文件名或文件全路径+文件名
+	 * 
+	 * @param fileName
+	 *            文件名或文件全路径+文件名
 	 * @return
 	 */
-	public static String getSuffixByFileName(String fileName){
-		
-		if(StringUtils.isBlank(fileName) || !fileName.contains(".")){
+	public static String getSuffixByFileName(String fileName) {
+
+		if (StringUtils.isBlank(fileName) || !fileName.contains(".")) {
 			return "error suffix";
 		}
-		
-		return StringUtils.substringAfterLast(fileName, ".");		
+
+		return StringUtils.substringAfterLast(fileName, ".");
 	}
-	
-    /**
-     * 替换英文引号为中文引号，引号可以不成对儿出现
-     * @param input 待处理的字符串
-     * @return
-     */
-    public static String replaceQuote(String pStr) {
-    	if(pStr==null)
-    	{
-    		return "";
-    	}
-        //把字符串按照双引号截成数组
-        String[] str = pStr.split("\"");
-        if(str.length==1)
-        {
-        	return pStr;
-        }
-        //替换后的字符串
-        String Newstr = "";
-        for (int i = 1; i <= str.length; i++)
-        {
-            if (i % 2 == 0)
-            {
-                Newstr += str[i - 1] + "”";
-            }
-            else
-            {
-                Newstr += str[i - 1] + "“";
-            }
-        }
 
-        return Newstr.substring(0, Newstr.length()-1);
+	/**
+	 * 替换英文引号为中文引号，引号可以不成对儿出现
+	 * 
+	 * @param input
+	 *            待处理的字符串
+	 * @return
+	 */
+	public static String replaceQuote(String pStr) {
+		if (pStr == null) {
+			return "";
+		}
+		// 把字符串按照双引号截成数组
+		String[] str = pStr.split("\"");
+		if (str.length == 1) {
+			return pStr;
+		}
+		// 替换后的字符串
+		String Newstr = "";
+		for (int i = 1; i <= str.length; i++) {
+			if (i % 2 == 0) {
+				Newstr += str[i - 1] + "”";
+			} else {
+				Newstr += str[i - 1] + "“";
+			}
+		}
 
-    }
-    
-    /**
-     * 转化Set 为List
-     * @param set
-     * @return
-     */
-    public static List<Object> treatSetToList(Set<Object> set){
-    	
-    	if(set ==null){
-    		return null;
-    	}
-    	
-    	List<Object> list = new ArrayList<Object>();
-    	for(Object t:set){
-    		list.add(t);
-    	}
-    	
-    	return list;
-    }
+		return Newstr.substring(0, Newstr.length() - 1);
+
+	}
+
+	/**
+	 * 转化Set 为List
+	 * 
+	 * @param set
+	 * @return
+	 */
+	public static List<Object> treatSetToList(Set<Object> set) {
+
+		if (set == null) {
+			return null;
+		}
+
+		List<Object> list = new ArrayList<Object>();
+		for (Object t : set) {
+			list.add(t);
+		}
+
+		return list;
+	}
+
+	/**
+	 * 将两个具有相同属性名和类型的对象的复制
+	 * 
+	 * @param oldObj
+	 *            原来的对象
+	 * @param newObj
+	 *            复制之后的对象
+	 * @return 复制之后新的对象
+	 * @throws Exception
+	 */
+	public static Object objClone(Object oldObj, Object newObj) throws Exception {
+
+		if (oldObj == null || newObj == null) { // 当传入的参数存在空值是，返回空
+			return null;
+		}
+
+		Class oldClass = oldObj.getClass();
+		Class newClass = newObj.getClass();
+
+		Field[] fields1 = oldClass.getDeclaredFields(); // 获取到oldClass的所有属性
+		Field[] fields2 = newClass.getDeclaredFields(); // 获取到newClass的所有属性
+
+		Method method1 = null;
+		Method method2 = null;
+		
+		String upFidName = "";
+
+		for (Field fid1 : fields1) { // 遍历oldClass的属性
+			for (Field fid2 : fields2) { // 遍历newClass的属性
+				if (fid1.getName().equals(fid2.getName())) { // 判断属性名字是否一样
+					upFidName = fid1.getName().substring(0, 1).toUpperCase() + fid1.getName().substring(1); // 属性的首字母大写
+
+					try {
+						method1 = oldClass.getMethod("get" + upFidName, null); // 获取到oldClass的一个属性的get方法
+						method2 = newClass.getMethod("set" + upFidName, fid1.getType());// 获取到oldClass的一个属性的set方法
+					} catch (NoSuchMethodException e) {
+					}
+					if (method1 != null && method2 != null) {
+						method2.invoke(newObj, method1.invoke(oldObj));
+					}
+				}
+			}
+		}
+		return newObj;
+	}
 
 }

@@ -241,9 +241,16 @@
         <delete dir="${build.dir}" />
         <delete dir="${dist.dir}" />
     </target>
+	
+	<target name="copy-jar">
+		<copyfile dest="E:/workspace_2015/dcenter/WebContent/WEB-INF/lib/${name}-${version}.jar" src="${dist.jar}" />
+		<copyfile dest="E:/workspace_2015/shenbao/WebContent/WEB-INF/lib/${name}-${version}.jar" src="${dist.jar}" />
+		<copyfile dest="E:/workspace_core/ucenter/WebContent/WEB-INF/lib/${name}-${version}.jar" src="${dist.jar}" />
+		<copyfile dest="E:/workspace_core/wsjar/WebContent/WEB-INF/lib/${name}-${version}.jar" src="${dist.jar}" />
+	</target>
 
     <target name="build-everything"
-            depends="compile-java,jar" />
+            depends="compile-java,jar,copy-jar" />
 
     <target name="build-everything-cc"
             depends="cleanAll, compile-java, compile-test, docs, jar" />

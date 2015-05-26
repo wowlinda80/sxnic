@@ -1,0 +1,55 @@
+<!DOCTYPE validators PUBLIC 
+        "-//OpenSymphony Group//XWork Validator 1.0.2//EN" 
+        "http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd">
+
+<validators>
+
+	<field name="basecode.sortCode">
+		<field-validator type="requiredstring">
+			<message>类别编码不能为空</message>
+		</field-validator>
+
+		<field-validator type="stringlength">
+			<param name="minLength">2</param>
+			<param name="maxLength">10</param>
+			<message>类别编码的长度应该在2-10个字符</message>
+		</field-validator>
+	</field>
+	
+	<field name="basecode.sortName">
+		<field-validator type="requiredstring">
+			<message>类别名称不能为空</message>
+		</field-validator>
+
+		<field-validator type="stringlength">
+			<param name="minLength">1</param>
+			<param name="maxLength">100</param>
+			<message>类别编码的长度应该在1-60个字符</message>
+		</field-validator>
+	</field>
+	
+	<field name="basecode.infoCode">
+		<field-validator type="requiredstring">
+			<message>编码不能为空</message>
+		</field-validator>
+
+		<field-validator type="stringlength">
+			<param name="minLength">1</param>
+			<param name="maxLength">10</param>
+			<message>类别编码的长度应该在1-10个字符</message>
+		</field-validator>
+	</field>
+	
+	<field name="basecode.infoName">
+		<field-validator type="requiredstring">
+			<message>名称不能为空</message>
+		</field-validator>
+
+		<field-validator type="stringlength">
+			<param name="minLength">1</param>
+			<param name="maxLength">100</param>
+			<message>类别编码的长度应该在2-100个字符</message>
+		</field-validator>
+	</field>
+	
+</validators>

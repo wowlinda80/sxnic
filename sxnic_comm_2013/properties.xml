@@ -3,7 +3,7 @@
 
     <!-- Name and Version -->
     <property name="name" value="sxnic-comm" />
-    <property name="version" value="2.0.0" />
+    <property name="version" value="3.0.0" />
 
     <!-- Directories for sources -->
     <property name="src.dir" value="${basedir}/src/comm" />
